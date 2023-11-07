@@ -72,6 +72,7 @@ const timerDiv = document.getElementById('timerDiv');
 var nextState = function(){
   // Advance state index
   stateIdx += 1;
+  clickShot = false; // Stop firing
   if(stateIdx >= states.length) stateIdx = states.length - 1;
   state = states[stateIdx];
   // Apply state-based changes
@@ -577,7 +578,7 @@ THREE.FirstPersonControls = function ( camera, scene, jumpHeight = config.player
       if(config.render.c2p.mode == 'delayed') c2p.material.color = new  THREE.Color(config.render.c2p.downColor);
       break;
     case GameInputEventType.FIRE_END:
-      clickShot = false;
+      if(state == 'sandbox' || referenceTarget) clickShot = false; // Require click and hold only in sandbox
       if(config.render.c2p.mode == 'delayed') c2p.material.color = new THREE.Color(config.render.c2p.upColor);
       break;
     case GameInputEventType.JUMP:
@@ -930,6 +931,7 @@ function damageTarget(target, hitPoint){
   target.health -= config.weapon.damagePerSecond * config.weapon.firePeriod;
   if(target.health <= 0 || referenceTarget) {
     destroyTarget(target);
+    clickShot = true;
     return true;
   }
   else {
