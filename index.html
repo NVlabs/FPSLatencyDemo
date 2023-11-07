@@ -1,0 +1,501 @@
+<!--The MIT License (MIT)
+
+Copyright (c) 2021 by Joao vinicius (https://codepen.io/viniciusSouza/pen/gOPVmKV)
+Copyright (c) 2021 NVIDIA CORPORATION & AFFILIATES
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
+
+<style>
+    .instructions {
+        position: absolute;
+
+        width: 100%;
+        height: 100%;
+        padding : 0; margin: 0;
+
+        user-select: none;
+        cursor: pointer;
+
+        display: -webkit-box;
+        display: -moz-box;
+        display: box;
+
+        -webkit-box-orient: horizontal;
+        -moz-box-orient: horizontal;
+        box-orient: horizontal;
+
+        -webkit-box-pack: center;
+        -moz-box-pack: center;
+        box-pack: center;
+
+        -webkit-box-align: center;
+        -moz-box-align: center;
+        box-align: center;
+
+        color: #ffffff;
+        background-color: rgba(0,0,0,0.5);
+
+        text-align: center;
+        font-family: 'Trebuchet MS';
+        font-size: 14px;
+        line-height: 24px;
+        text-shadow: 1px 1px 1px #9E9E9E;
+    }
+
+    .custom_container{
+        position: absolute;
+        width: 100%;
+        top: 2%;
+    }
+
+    .custom_container p {
+        text-align: center;
+        font-family: 'Trebuchet MS';
+        font-size: 20px;
+        color: #FFF;
+        text-shadow: 1px 1px 1px #9E9E9E;
+    }
+
+    .fps_label{
+        position: absolute;
+        right: 10px;
+        padding-right: 35px;
+        margin-bottom: 12px;
+        height: 25px;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .timer_label {
+        position: absolute;
+        width: 100%;
+        top: 2%;
+        height: 50px;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .timer_label p{
+        font-size: 60px;
+    }
+
+    .checkbox_label{
+        position: absolute;
+        left: 10px;
+        padding-left: 35px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        height: 25px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    /* Hide the "actual" checkbox input */
+    .checkbox_label input {
+        position: absolute;
+        cursor: pointer;
+        opacity: 0;
+        height: 0; 
+        width: 0;
+    }
+
+    /* Draw a custom checkmark */
+    .checkmark{
+        position: absolute;
+        top: 78%;
+        left: 0;
+        height: 25px;
+        width: 25px;
+        background-color: #000;
+        opacity: 0.3;
+    }
+
+    .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+
+    /* On mouse-over, add a grey background color */
+    .checkbox_label:hover input ~ .checkmark {
+        background-color: #000;
+        opacity: 1.0;
+    }
+
+    /* On checked, set to active color */
+    .checkbox_label input:checked ~ .checkmark {
+        background-color: #76b900;
+    }
+
+    /* Show the checkmark when checked */
+    .checkbox_label input:checked ~ .checkmark:after {
+        display: block;
+    }
+
+    /* Style the checkmark check */
+    .checkbox_label .checkmark:after {
+        left: 9px;
+        top: 5px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 3px 3px 0;
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+    }
+
+    .custom_slider{
+        -webkit-appearance: none;
+
+        position: absolute;
+        left: 25%;
+
+        width: 50%;
+        height: 10px;
+        border-radius: 5px;  
+
+        background: #000;
+        opacity: 0.3;
+        transition: opacity .2s;
+    }
+
+    .custom_slider:hover{
+        opacity: 1.0;
+    }
+
+    .custom_slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 25px;
+        height: 25px;
+        background: #76b900;
+        cursor: pointer;
+        border-radius: 50%;
+    }
+
+    .custom_slider::-moz-range-thumb {
+        width: 25px;
+        height: 25px;
+        background: #76b900;
+        cursor: pointer;
+        border-radius: 50%;
+    }
+
+    #banner {
+        position: absolute;
+        display: inline;
+
+        width: 100%;
+        height: 80px;
+
+        background: rgba(0,0,0, 0.5);
+
+        text-align: center;
+        font-family: 'Trebuchet MS';
+        font-size: 12pt;
+    }
+
+    #banner h1 {
+        display: inline-block;
+        color: #fff;
+        width: 30%;
+    }
+
+    #results {
+        visibility: hidden;
+        width:70%;
+        height: 40%;
+        left: 15%;
+        top: 30%;
+    
+        text-shadow: 1px 1px 1px #9E9E9E;
+        position: absolute;
+        background-color: rgba(0,0,0,0.5);
+
+        display: -webkit-box;
+        display: -moz-box;
+        display: box;
+
+        -webkit-box-orient: horizontal;
+        -moz-box-orient: horizontal;
+        box-orient: horizontal;
+
+        -webkit-box-pack: center;
+        -moz-box-pack: center;
+        box-pack: center;
+
+        -webkit-box-align: center;
+        -moz-box-align: center;
+        box-align: center;
+
+        color: #ffffff;
+        text-align: center;
+        font-family: 'Trebuchet MS';
+        font-size: 14px;
+        line-height: 24px;
+    }
+
+    #lowlatresult {
+        top:0;
+        left: 0;
+        position: absolute;
+        width: 33%;
+        height: 50%;
+
+        color: #76b900;
+        text-shadow: 1px 1px 1px #588a00;
+        text-align: center;
+        font-family: 'Trebuchet MS';
+        font-size: 18px;
+    }
+
+    #midlatresult {
+        top:0;
+        left:33%;
+        position: absolute;
+        width: 33%;
+        height: 50%;
+
+        color: rgb(250, 194, 0);
+        text-shadow: 1px 1px 1px rgb(175, 137, 0);
+        text-align: center;
+        font-family: 'Trebuchet MS';
+        font-size: 18px;
+    }
+
+    #highlatresult {
+        top:0;
+        left:66%;
+        position: absolute;
+        width: 33%;
+        height: 50%;
+
+        color: rgb(255, 0, 0);
+        text-shadow: 1px 1px 1px rgb(175, 50, 50);
+        text-align: center;
+        font-family: 'Trebuchet MS';
+        font-size: 18px;
+    }
+
+    #middiffresult {
+        position: absolute;
+        left: 0;
+        width: 50%;
+        height: 30%;
+        bottom: 20%;
+
+        color: rgb(250, 194, 0);
+        text-shadow: rgb(175, 137, 0);
+        text-align: center;
+        font-family: 'Trebuchet MS';
+        font-size: 20px;
+    }
+
+    #highdiffresult {
+        position: absolute;
+        left: 50%;
+        width: 50%;
+        height: 30%;
+        bottom: 20%;
+
+        color:rgb(255, 0, 0);
+        text-shadow: rgb(175, 50, 50);
+        text-align: center;
+        font-family: 'Trebuchet MS';
+        font-size: 20px;
+    }
+
+    #continuePrompt {
+        position: absolute;
+        width: 100%;
+        height: 10%;
+        bottom: 5%;
+
+        text-align: center;
+        font-family: 'Trebuchet MS';
+        font-size: 20px;
+    }
+
+    /* Re-style the dat.gui elements (NV green where possible/easy) */
+    .dg *{
+        font-family: 'Trebuchet MS';
+    }
+    
+    .dg .c .slider-fg{
+        background: #76B900 !important;
+    }
+
+    .dg .cr.number {
+        border-left: 3px solid #76B900 !important;
+    }
+
+    .dg .cr.boolean {
+    border-left: 3px solid #76B900 !important;
+    }
+
+    .dg .cr.number input[type=text] {
+        color: #76B900 !important;
+    }
+
+
+</style>
+
+<head>
+    <title>Latency Sensitivity Demo</title>
+    <link rel="icon" href="assets/images/icon.png">
+</head>
+
+<body style="margin: 0;">
+    <!-- Empty div for rendering statistics -->
+    <div id="stats"></div>
+    
+    <!-- Div for score banner (top of screen) -->
+    <div id="banner">
+        <h1>Click to destroy the target!</h1>
+    </div>
+
+    <div id="results">
+        <div id="lowlatresult"></div>
+        <div id="midlatresult"></div>
+        <div id='highlatresult'></div>
+        <div id="middiffresult"></div>
+        <div id='highdiffresult'></div>
+        <div id='continuePrompt'>
+            <h2>Press <b>enter</b> to close this window and enter sandbox mode</h2>
+        </div>
+    </div>
+
+    <!-- Full screen div for the application (w/ basic instructions) -->
+    <div id="sensInstructions" class="instructions">
+        <div>
+            <h1>Sensitivity Adjustment Phase</h1>
+            <p>
+                Use the slider above and/or the up/down arrow keys to set your sensitivity!<br>
+                <br>
+            </p>
+            <h2>Controls</h2>
+            <p>
+                Look: Mouse<br>
+                Shoot: Left Mouse<br>
+                Up/Down Arrow: Change mouse sensitivity<br>
+                I: Invert Y (pitch) sensitivity<br>
+                Enter: Continue to next stage (latency adjustment)<br>
+                <br>
+            </p>
+            <h2>Click to Resume</h2>
+        </div>
+    </div>
+
+    <!-- Full screen div for the application (w/ basic instructions) -->
+    <div id="latInstructions" class="instructions">
+        <div>
+            <h1>Latency Adjustment Phase</h1>
+            <p>
+                Use the slider above and/or the up/down arrow keys to set a latency you notice!<br>
+                <br>
+            </p>
+            <h2>Controls</h2>
+            <p>
+                Look: Mouse<br>
+                Shoot: Left Mouse<br>
+                Up/Down Arrow: Change latency (until noticeable)<br/>
+                Enter: Continue to next stage (aim task) <br>
+                <br>
+            </p>
+            <h2>Click to Resume</h2>
+        </div>
+    </div>
+
+    <!-- Full screen div for the application (w/ basic instructions) -->
+    <div id="measInstructions" class="instructions">
+        <div>
+            <h1 classname="element" id="measHeader">Measurement Phase 1/3</h1>
+            <p>
+                Destroy the yellow reference target to begin<br>
+                Try to destroy the green target as quick as possible by tracking it while holding left mouse! <br>
+                <br>
+            </p>
+            <h2>Controls</h2>
+            <p>
+                Look: Mouse<br>
+                Shoot: Left Mouse<br>
+                <br>
+            </p>
+            <h2>Click to Resume</h2>
+        </div>
+    </div>
+
+    <div id="sandboxInstructions" class="instructions">
+        <div>
+            <h1>Click to Resume</h1>
+            <p>
+                Shoot: Left Mouse<br/>
+                Move: WASD (or arrows)<br/>
+                Run: SHIFT<br/>
+                Jump: SPACE<br/>
+                Look: Mouse</br>
+                Reset score banner: R
+            </p>
+        </div>
+    </div>
+
+    <!-- Sensitivity Adjustment Slider -->
+    <div id="fpsIndicatorDiv" class="custom_container">
+        <label class="fps_label">
+            <p className="element" id="fps_indicator"></p>
+        </label>
+    </div>
+    <div id="timerDiv" class="custom_container">
+        <label class="timer_label">
+            <p className="element" id="time_indicator"></p>
+        </label>
+    </div>
+    <div id="sensSliderDiv" class="custom_container">
+        <label class="checkbox_label">
+            <input type="checkbox" class="custom_checkbox" id="invertYCheckbox">
+            <span class="checkmark"></span>
+            <p>Invert Y?</p>
+        </label>
+        <input type="range" min="0" max="0.5" step="0.005" value="0.2" class="custom_slider" id="sensSlider">
+        <p>Mouse Sensitivity (up/down arrows)</p>
+    </div>
+    <div id="latSliderDiv" class="custom_container">
+        <input type="range" min="0" max="20" step="1" value="0" class="custom_slider" id="latSlider">
+        <p>Added Latency (up/down arrows)</p>
+    </div>
+</body>
+
+<audio id="fireSound" src="assets/sounds/laser.wav"></audio>
+<audio id="explodeSound" src="assets/sounds/explosion.wav"></audio>
+
+<input id="configInput" type="file" style="visibility:hidden; position:absolute;"/>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r118/three.js"></script>
+<script src="https://mrdoob.github.io/stats.js/build/stats.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.meshline/1.3.0/THREE.MeshLine.js"></script>
+<script src="js/fps.js"></script>
