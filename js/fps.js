@@ -29,7 +29,9 @@ const MEAS_DUR_S = 60;
 const TARGET_SIZE = 0.6;
 const TARGET_DIST = 30;
 const TARGET_HEIGHT = 6;
+const TARGET_CROUCH_HEIGHT = 4;
 const TARGET_JUMP = true;
+const TARGET_CROUCH = true;
 
 // States that the experiment progresses through
 const states = ["sensitivity", "latency", "measurement", "sandbox"]
@@ -304,10 +306,12 @@ var config = {
     // New parameters
     height : getURLParamIfPresent('targetHeight', TARGET_HEIGHT),
     jump : getURLParamIfPresent('targetJump', TARGET_JUMP), // Does the target jump?
+    crouch: getURLParamIfPresent('targetCrouch', TARGET_CROUCH), // Does the target crouch?
+    crouchHeight: getURLParamIfPresent('targetCrouchHeight', TARGET_CROUCH_HEIGHT),
     jumpSpeed : getURLParamIfPresent('targetJumpSpeed', 20),
     jumpGrav : getURLParamIfPresent('targetJumpGravity', 65),
-    minJumpTime : getURLParamIfPresent('targetMinJumpTime', 2),
-    maxJumpTime : getURLParamIfPresent('targetMaxJumpTime', 4),
+    minJumpCrouchTime : getURLParamIfPresent('targetMinJumpCrouchTime', 1),
+    maxJumpCrouchTime : getURLParamIfPresent('targetMaxJumpCrouchTime', 2),
 
     reference : { // Reference target configuration
       size: getURLParamIfPresent('refTargetSize', 1),             // Reference target size
@@ -905,7 +909,8 @@ function makeTarget(spawnPosition, targetRadius = 1, speed = 0, targetColor = ne
   target.speed = speed;
   target.velocity = new THREE.Vector3(0,0,0);
   target.timeToNextChange = timeToChange;
-  target.timeToNextJump = randInRange(config.targets.minJumpTime, config.targets.maxJumpTime);
+  target.timeToNextJumpCrouch = randInRange(config.targets.minJumpCrouchTime, config.targets.maxJumpCrouchTime);
+  target.inJump = false;
   target.health = 1.0;
   target.duration = 0;
   target.rotDir = randSign(); // Use ±1 to encode CW/CCW
@@ -1016,21 +1021,37 @@ function updateTargets(dt) {
 
     // Target jump gravity (only apply to non-reference targets)
     if(!referenceTarget){
-      if(target.position.y <= config.targets.height) {
+      if(target.position.y <= config.targets.height && target.inJump) {  // End of a jump (target back to normal height)
         target.position.y = config.targets.height;
         target.velocity.y = 0;
+        target.inJump = false;
       }
-      else { // In a jump (above nominal height)
+      else if(target.inJump) { // In a jump (above nominal height)
         // Accelerate the target towards the ground
         target.velocity.y -= config.targets.jumpGrav * dt;
       }
 
-      // Check for next jump
-      if(config.targets.jump){
-        target.timeToNextJump -= dt;
-        if(target.timeToNextJump <= 0 && canChangeVelocity){
-          target.velocity.y += config.targets.jumpSpeed;
-          target.timeToNextJump = randInRange(config.targets.minJumpTime, config.targets.maxJumpTime);
+      // Check for next jump/crouch
+      if(config.targets.jump || config.targets.crouch){
+        target.timeToNextJumpCrouch -= dt;
+        if(target.timeToNextJumpCrouch <= 0){
+          var jump = false; // Assume crouch for now
+          if(config.targets.jump && config.targets.crouch){   // Decide whether to jump or crouch
+            jump = randSign() < 0;
+          }
+          else if(config.targets.jump) { jump = true; }
+          if(jump) {
+            target.position.y = config.targets.height;     // Move target back to regular height to force jump
+            target.velocity.y += config.targets.jumpSpeed; // Create jump
+            target.inJump = true;
+          }
+          else {
+            // Force the target to transition from whatever state it is in now
+            if (target.position.y < config.targets.height) target.position.y = config.targets.height;
+            else target.position.y = config.targets.crouchHeight;
+          }
+          // Pick time for next event
+          target.timeToNextJumpCrouch = randInRange(config.targets.minJumpCrouchTime, config.targets.maxJumpCrouchTime);
         }
       }
    }
