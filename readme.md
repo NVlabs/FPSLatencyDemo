@@ -115,10 +115,12 @@ Typically JSON parameter names are _very_ similar to URL parameter names, but of
     * Target height above ground: `targetHeight` (`Number`) = 6
     * Target jumps
         * Can target jump?: `targetJump` (`Boolean`) = `True`
+        * Can target crouch?: `targetCrouch` (`Boolean`) = `True`
+        * Crouch height: `targetCrouchHeight` (`Number`) = `4`
         * Jump speed: `targetJumpSpeed` (`Number`) = `20`
         * Jump gravity: `targetJumpGravity` (`Number`) = `65`
-        * Min time between jumps: `targetMinJumpTime` (`Number`) = `2`
-        * Max time between jumps: `targetMaxJumpTime` (`Number`) = `4`
+        * Min time between jumps/crouches: `targetMinJumpCrouchTime` (`Number`) = `1`
+        * Max time between jumps/crouches: `targetMaxJumpCrouchTime` (`Number`) = `2`
     * Reference target (red target used to reset aim direction on reload/start of trial)
         * Size: `refTargetSize` (`Number`) = `1`
         * Distance: `refTargetDistance` (`Number`) = `30`
