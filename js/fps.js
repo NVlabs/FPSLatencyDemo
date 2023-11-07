@@ -133,6 +133,7 @@ var nextMeasCondition = function(){
   else {
     // End of measurement, display results
     measHeader.innerText = 'Measurement Complete!';
+    timeIndicator.style.display = 'none';
     showResults();
   }
 }
