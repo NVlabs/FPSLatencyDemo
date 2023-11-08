@@ -321,8 +321,9 @@ var config = {
 
     particles : { // Particle effect configuration
       size: getURLParamIfPresent('particleSize', 0.2),                      // Particle size for hitting/destroying the target
-      hitCount: getURLParamIfPresent('hitParticleCount', 2),               // Particle count for hitting the target
+      hitCount: getURLParamIfPresent('hitParticleCount', 1),               // Particle count for hitting the target
       destroyCount: getURLParamIfPresent('destroyParticleCount', 500),     // Particle count for destroying the target
+      duration: getURLParamIfPresent('hitParticleDuration', 1),            // Duration to draw hit particles
     }
   },
 
@@ -336,7 +337,8 @@ var config = {
     fireSpread: getURLParamIfPresent('weaponFireSpread', 0),      // Fire spread (symmetric in degrees)
     missParticles: getURLParamIfPresent('weaponMissParticles', false), // Does weapon draw miss particles
     missParticleSize: getURLParamIfPresent('weaponMissParticleSize', 0.2), // Size of miss particles
-    missParticleCount: getURLParamIfPresent('weaponMissParticleCount', 50), // Count of miss particles                         
+    missParticleCount: getURLParamIfPresent('weaponMissParticleCount', 50), // Count of miss particles
+    missParticleDuration: getURLParamIfPresent('weaponMissParticleDuration', 2), // Duration to draw miss particles                         
   }
 };
 
@@ -935,7 +937,7 @@ function damageTarget(target, hitPoint){
     return true;
   }
   else {
-    makeParticles(hitPoint, target.material.color, config.targets.particles.size, config.targets.particles.hitCount);
+    makeParticles(hitPoint, target.material.color, config.targets.particles.size, config.targets.particles.hitCount, config.targets.particles.duration);
     target.material.color = new THREE.Color(config.targets.fullHealthColor).lerp(new THREE.Color(config.targets.minHealthColor), 1-target.health);
     return false;
   }
@@ -1938,7 +1940,7 @@ function animate() {
             }
           }
           else{                                               // Missed the target
-            if(config.weapon.missParticles) makeParticles(intersect.point, new THREE.Color(0,0,0), config.weapon.missParticleSize, config.weapon.missParticleCount);
+            if(config.weapon.missParticles) makeParticles(intersect.point, new THREE.Color(0,0,0), config.weapon.missParticleSize, config.weapon.missParticleCount, config.weapon.missParticleDuration);
           }
           updateBanner();
         }
