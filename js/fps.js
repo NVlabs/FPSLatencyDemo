@@ -84,6 +84,11 @@ var nextState = function(){
   else if(state == "latency") { // Moving into latency adjustment state
     sensitivityDiv.style.visibility = 'hidden';
     latencyDiv.style.visibility = 'visible';
+    // Predict 60ms of latency
+    // var start_lat = Math.round(60 / frameTimes.avg());
+    // latencySlider.value = start_lat
+    // latencySlider.oninput()
+    set_latency(latencySlider.min); // Set the minimum latency
   }
   else if(state == "measurement") {
     // Build up our latency conditions based on the JND latency here
@@ -94,7 +99,7 @@ var nextState = function(){
       measLatencies.push(jnd_lat);
     }
     measLatencies = measLatencies.sort(function(a,b) {return b-a;})
-    console.log('Testing ' + measLatencies)
+    console.log('Selected JND of ' +  jnd_lat + ', Testing ' + measLatencies)
     latencyDiv.style.visibility = 'hidden';
     timerDiv.style.visibility = 'visible';
   }
