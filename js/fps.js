@@ -1408,7 +1408,7 @@ function makeGUI() {
   var weaponControls = gui.addFolder('Weapon');
   weaponControls.add(config.weapon, 'auto').name('Automatic');
   weaponControls.add(config.weapon, 'firePeriod', 0, 2).step(0.01).name('Fire Period (s)').listen();
-  weaponControls.add(config.weapon, 'damagePerSecond', 0, 100).step(0.01).name('Damagge/s').listen();
+  weaponControls.add(config.weapon, 'damagePerSecond', 0, 100).step(0.01).name('Damage/s').listen();
   weaponControls.add(config.weapon, 'fireSpread', 0, 45).step(0.1).name('Fire Spread (deg)').listen();
   weaponControls.add(config.weapon, 'scoped').name('Has Scope').listen().onChange(function(value){
     setGuiElementEnabled(scopeControls, value);
