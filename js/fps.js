@@ -32,6 +32,7 @@ const TARGET_HEIGHT = 6;
 const TARGET_CROUCH_HEIGHT = 4;
 const TARGET_JUMP = true;
 const TARGET_CROUCH = true;
+const MIN_FRAME_RATE = 30; // Below this frame rate a warning is displayed
 
 // States that the experiment progresses through
 const states = ["sensitivity", "latency", "measurement", "sandbox"]
@@ -1883,6 +1884,15 @@ function animate() {
   if(frameTimeValid){
     var avgFrameRate = 1e3 / frameTimes.avg();
     fpsIndicator.innerText = avgFrameRate.toFixed(2)+ " fps";
+    if(avgFrameRate < MIN_FRAME_RATE) {
+      fpsIndicator.style.color = '#F00';
+      fpsIndicator.style.textShadow = '1px 1px 1px rgb(175, 50, 50)';
+      fpsIndicator.innerText += '\nLow FPS!!!';
+    }
+    else {
+      fpsIndicator.style.color = '#FFF'
+      fpsIndicator.style.textShadow = '1px 1px 1px #9E9E9E';
+    }
   }
 
   // Update time remaining indicator
