@@ -86,8 +86,11 @@ var nextState = function(){
     // Set reasonable start latency
     var avgFrameTime = frameTimes.avg();
     console.log('Average frame time of ' + avgFrameTime + ' ms')
-    const INITIAL_LATENCY_FRAMES = Math.round(INITIAL_LATENCY_MS / frameTimes.avg());
-    latencySlider.value = INITIAL_LATENCY_FRAMES
+
+    var delay_frames 
+    if (INITIAL_LATENCY_FRAMES > 0) delay_frames = INITIAL_LATENCY_FRAMES;
+    else delay_frames = Math.round(INITIAL_LATENCY_MS / frameTimes.avg());
+    latencySlider.value = delay_frames
     latencySlider.oninput()
     // set_latency(latencySlider.min); // Set the minimum latency
   }
@@ -355,6 +358,7 @@ const RANDOM_ORDER = getURLParamIfPresent('randomizeOrder', false);   // Apply r
 const MEAS_DUR_S = getURLParamIfPresent('measurementDuration' , 60);  // Time to measure for each latency condition
 const MIN_FRAME_RATE = getURLParamIfPresent('warnFrameRate', 30); // Below this frame rate a warning is displayed
 const INITIAL_LATENCY_MS = getURLParamIfPresent('defaultLatencyMs', 66); // This is the initial target latency
+const INITIAL_LATENCY_FRAMES = getURLParamIfPresent('defaultLatencyFrames', -1); // This is the target latency in frames (unused if -1)
 
 function exportConfig(){
   var a = document.createElement('a');

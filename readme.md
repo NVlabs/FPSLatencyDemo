@@ -38,6 +38,7 @@ Typically JSON parameter names are _very_ similar to URL parameter names, but of
     * The time (in seconds) to measure for each experiment: `measurementDuration` (`Number`) = `60`
     * The frame rate at which to warn user for perf: `warnFrameRate` (`Number`) = `30`
     * The initial JND latency target in milliseconds (may not be accurate!): `defaultLatencyMs` (`Number`) = `66`
+    * The initial JND latency target in frames (accurate, but deprioritized/scales w/ frame rate): `defaultLatencyFrames` (`Integer`) = `-1`
 
 * Rendering
     * Set frame rate?: `setFPS` (`Boolean`) = `False`
