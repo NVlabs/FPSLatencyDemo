@@ -100,6 +100,8 @@ var nextState = function(){
       measLatencies.push(jnd_lat);
     }
     measLatencies = measLatencies.sort(function(a,b) {return b-a;})
+    // Optionally randomize the condition order
+    if(RANDOM_ORDER) measLatencies.sort(() => Math.random() - 0.5);
     console.log('Selected JND of ' +  jnd_lat + ', Testing ' + measLatencies)
     latencyDiv.style.visibility = 'hidden';
     timerDiv.style.visibility = 'visible';
@@ -347,6 +349,9 @@ var config = {
     missParticleDuration: getURLParamIfPresent('weaponMissParticleDuration', 2), // Duration to draw miss particles                         
   }
 };
+
+const RANDOM_ORDER = getURLParamIfPresent('randomizeOrder', false); // Apply random order to conditions
+
 
 function exportConfig(){
   var a = document.createElement('a');
