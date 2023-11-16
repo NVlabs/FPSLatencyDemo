@@ -33,6 +33,12 @@ Currently supported configuration is provided as a nested list below. The format
 
 Typically JSON parameter names are _very_ similar to URL parameter names, but often with less verbosity as they are inherently nested in the configuration dictionary.
 
+* Experiment
+    * Randomize latency condition order? : `randomizeOrder` (`Boolean`) = `False`
+    * The time (in seconds) to measure for each experiment: `measurementDuration` (`Number`) = `60`
+    * The frame rate at which to warn user for perf: `warnFrameRate` (`Number`) = `30`
+    * The initial JND latency target in milliseconds (may not be accurate!): `defaultLatencyMs` (`Number`) = `66`
+
 * Rendering
     * Set frame rate?: `setFPS` (`Boolean`) = `False`
     * Frame rate: `frameRate` (`Number`) = `60`
