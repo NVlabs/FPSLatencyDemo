@@ -57,10 +57,19 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         text-shadow: 1px 1px 1px #9E9E9E;
     }
 
+    .controls {
+        position: absolute;
+        font-family: 'Trebuchet MS';
+        left: 30px;
+        color: #ffffff;
+        text-shadow: 1px 1px 1px #4E4E4E;
+        background-color: rgba(0,0,0,0);
+    }
+
     .custom_container{
         position: absolute;
         width: 100%;
-        top: 2%;
+        top: 25%;
     }
 
     .custom_container p {
@@ -102,7 +111,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
 
     .checkbox_label{
         position: absolute;
-        left: 10px;
+        left: 25%;
         padding-left: 35px;
         margin-bottom: 12px;
         cursor: pointer;
@@ -445,15 +454,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
                 Use the slider above and/or the up/down arrow keys to set your sensitivity!<br>
                 <br>
             </p>
-            <h2>Controls</h2>
-            <p>
-                Look: Move mouse<br>
-                Shoot: Click left mouse (once on reference)<br>
-                Up/Down Arrow: Change mouse sensitivity<br>
-                I: Invert Y (pitch) sensitivity<br>
-                Enter: Continue to next stage (latency adjustment)<br>
-                <br>
-            </p>
             <h2>Click to Resume</h2>
         </div>
     </div>
@@ -466,14 +466,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
                 Use the slider above and/or the up/down arrow keys to set a latency you notice!<br>
                 <br>
             </p>
-            <h2>Controls</h2>
-            <p>
-                Look: Move mouse<br>
-                Shoot: Click left mouse (once on reference)<br>
-                Up/Down Arrow: Change latency (until noticeable)<br/>
-                Enter: Continue to next stage (aim task) <br>
-                <br>
-            </p>
             <h2>Click to Resume</h2>
         </div>
     </div>
@@ -484,21 +476,45 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
             <h1 classname="element" id="measHeader">Measurement Phase 1/3</h1>
             <p>
                 Destroy (click) the yellow reference target to begin<br>
-                Try to track the green target as well as possible after clicking on the reference <br>
+                Try to track the green target as well as possible after clicking on the yellow <br>
                 <i>Note: You don't have to hold down/click the mouse button on the green target</i><br>
-                <br>
-            </p>
-            <h2>Controls</h2>
-            <p>
-                Look: Move mouse<br>
-                Shoot: Click left mouse (once on reference)<br>
                 <br>
             </p>
             <h2>Click to Resume</h2>
         </div>
     </div>
 
-    <!-- Sensitivity Adjustment Slider -->
+    <!-- Top left div for Controls -->
+    <div id="sensControls" class="controls">
+        <h2>Controls</h2>
+        <p>
+            <strong class="controlKey">Look:</strong> Move mouse<br />
+            <strong class="controlKey">Shoot:</strong> Click left mouse (once on yellow target)<br />
+            <strong class="controlKey">Up/Down Arrow:</strong> Change mouse sensitivity<br />
+            <strong class="controlKey">I:</strong> Invert Y (pitch) sensitivity<br />
+            <strong class="controlKey">Enter:</strong> Continue to next stage (latency adjustment) <br />
+        </p>
+    </div>
+    <div id="latControls" class="controls">
+        <h2>Controls</h2>
+        <p>
+            <strong class="controlKey">Look:</strong> Move mouse<br>
+            <strong class="controlKey">Shoot:</strong> Click left mouse (once on yellow target)<br>
+            <strong class="controlKey">Up/Down Arrow:</strong> Change latency (until noticeable)<br/>
+            <strong class="controlKey">Enter:</strong> Continue to next stage (aim task) <br>
+            <br>
+        </p>
+    </div>
+    <div id="measControls" class="controls">
+        <h2>Controls</h2>
+        <p>
+            <strong class="controlKey">Look:</strong> Move mouse<br>
+            <strong class="controlKey">Shoot:</strong> Click left mouse (once on yellow target)<br>
+            <br>
+        </p>
+    </div>
+
+    <!-- Adjustment Sliders -->
     <div id="fpsIndicatorDiv" class="custom_container">
         <label class="fps_label">
             <p className="element" id="fps_indicator"></p>
@@ -513,7 +529,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         <label class="checkbox_label">
             <input type="checkbox" class="custom_checkbox" id="invertYCheckbox">
             <span class="checkmark"></span>
-            <p>Invert Y?</p>
+            <p>Invert Y? (I)</p>
         </label>
         <input type="range" min="0" max="0.5" step="0.005" value="0.2" class="custom_slider" id="sensSlider">
         <p>Mouse Sensitivity (up/down arrows)</p>

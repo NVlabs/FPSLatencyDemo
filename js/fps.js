@@ -749,7 +749,11 @@ THREE.FirstPersonControls = function ( camera, scene, jumpHeight = config.player
 const sensitivityInstructions = document.getElementById("sensInstructions");
 const latencyInstructions = document.getElementById("latInstructions");
 const measurementInstructions = document.getElementById("measInstructions");
+const sensitivityControls = document.getElementById("sensControls");
+const latencyControls = document.getElementById("latControls");
+const measurementControls = document.getElementById("measControls");
 var instructions = sensitivityInstructions;
+var controls = sensitivityControls
 
 var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;      // Check for pointer lock option
 if ( havePointerLock ) {
@@ -765,6 +769,7 @@ if ( havePointerLock ) {
         rawInputState.enable(true);
       fpsControls.enabled = true;
       instructions.style.display = 'none';
+      controls.style.display = 'none';
       if(state == 'measurement' && !referenceTarget) inMeas = true;
     } 
     else if(!resultsDisplayed) {    // Don't allow re-entering FPS mode when results displayed
@@ -773,6 +778,7 @@ if ( havePointerLock ) {
       // Click handler for pointer lock
       instructions.addEventListener( 'click', plClickListener, false);
       instructions.style.display = '-webkit-box';
+      controls.style.display = '-webkit-box';
       if(state == 'measurement') inMeas = false;
     }
     // dat.GUI.toggleHide();
@@ -1476,16 +1482,22 @@ function updateInstructions() {
   sensitivityInstructions.style.display = 'none';
   latencyInstructions.style.display = 'none';
   measurementInstructions.style.display = 'none';
+  // sensitivityControls.style.display = 'none';
+  // latencyControls.style.display = 'none';
+  // measurementControls.style.display = 'none';
   bannerDiv.style.display = 'none';
   
   if (state == "sensitivity"){
     instructions = sensitivityInstructions;
+    controls = sensitivityControls;
   }
   else if (state == "latency"){
     instructions = latencyInstructions;
+    controls = latencyControls;
   }
   else if (state == "measurement"){
     instructions = measurementInstructions;
+    controls = measurementControls;
   }
 
   // Go back to pointer mode
