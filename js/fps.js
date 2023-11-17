@@ -150,7 +150,6 @@ const midlatresult = document.getElementById("midlatresult");
 const highlatresult = document.getElementById("highlatresult");
 const middiffresult = document.getElementById("middiffresult");
 const highdiffresult = document.getElementById("highdiffresult");
-const csvresults = document.getElementById("csv_string");
 var resultsDisplayed = false;
 
 var showResults = function(){
@@ -188,6 +187,64 @@ var showResults = function(){
   document.exitPointerLock();
   measurementInstructions.style.display = 'none';
   bannerDiv.style.visibility = 'hidden';
+}
+
+function copyTable() {
+  var results_table = document.getElementById("results_table").outerHTML;
+  navigator.clipboard.writeText(results_table).then(function() {
+    console.log('Table copied to clipboard');
+  }).catch(function(err) {
+    console.error('Could not copy text: ', err);
+  });
+}
+
+function copyTableRows() {
+  var rows = document.getElementById("results_table").rows;
+  var textToCopy = "";
+  for (var i = 1; i < rows.length; i++) { // Start from 1 to exclude headers
+      for (var j = 0; j < rows[i].cells.length; j++) {
+          textToCopy += rows[i].cells[j].innerText + (j === rows[i].cells.length - 1 ? '' : '\t');
+      }
+      textToCopy += '\n';
+  }
+
+  navigator.clipboard.writeText(textToCopy).then(function() {
+      console.log('Table row copied to clipboard');
+  }).catch(function(err) {
+      console.error('Could not copy text: ', err);
+  });
+}
+
+function downloadCSV(csvContent, filename) {
+  var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  var link = document.createElement("a");
+  var url = URL.createObjectURL(blob);
+  link.setAttribute("href", url);
+  link.setAttribute("download", filename);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function downloadTableAsCSV(includeHeaders) {
+  var results_table = document.getElementById("results_table");
+  var rows = results_table.rows;
+  var csvContent = "";
+
+  var startRow = includeHeaders ? 0 : 1; // Start from 1 to exclude headers
+
+  for (var i = startRow; i < rows.length; i++) {
+      var row = [], cols = rows[i].querySelectorAll("td, th");
+
+      for (var j = 0; j < cols.length; j++) {
+          row.push(cols[j].innerText);
+      }
+
+      csvContent += row.join(",") + "\n";
+  }
+
+  downloadCSV(csvContent, includeHeaders ? 'full_table.csv' : 'data_only.csv');
 }
 
 // Configuration

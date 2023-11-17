@@ -409,7 +409,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         <div id="middiffresult"></div>
         <div id='highdiffresult'></div>
         <div id='finalInstructions'>
-            <table class="results_table">
+            <table id="results_table" class="results_table">
                 <thead>
                     <tr>
                         <th>Mid Lat [frames]</th>
@@ -433,6 +433,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
                     </tr>
                 </tbody>
             </table>
+            <button onclick="copyTable()">Copy Table</button>
+            <button onclick="copyTableRows()">Copy Row</button>
+            <button onclick="downloadTableAsCSV(true)">Full CSV</button>
+            <button onclick="downloadTableAsCSV(false)">CSV Row</button>
             <p>Visit <a href="https://nvlabs.github.io/WebFPSci/">this link</a> to experiment more!</p>
         </div>
     </div>
