@@ -183,6 +183,30 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         transition: opacity .2s;
     }
 
+    .results_table{
+        margin-left: auto;
+        margin-right:auto;
+        width: 80%;
+    }
+
+    table, th, td {
+        border: 1px solid white;
+    }
+
+    table {
+        color: white;
+        border-collapse: collapse;
+    }
+
+    td {
+        text-align: center;
+    }
+
+    a:link, a:visited {
+        color: #76b900;
+
+    }
+
     .custom_slider:hover{
         opacity: 1.0;
     }
@@ -329,15 +353,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         font-size: 20px;
     }
 
-    #continuePrompt {
+    #finalInstructions {
         position: absolute;
         width: 100%;
         height: 10%;
-        bottom: 5%;
+        bottom: 10%;
 
         text-align: center;
         font-family: 'Trebuchet MS';
-        font-size: 20px;
+        font-size: 15px;
     }
 
     /* Re-style the dat.gui elements (NV green where possible/easy) */
@@ -384,8 +408,32 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         <div id='highlatresult'></div>
         <div id="middiffresult"></div>
         <div id='highdiffresult'></div>
-        <div id='continuePrompt'>
-            <h2>Press <b>enter</b> to close this window and enter sandbox mode</h2>
+        <div id='finalInstructions'>
+            <table class="results_table">
+                <thead>
+                    <tr>
+                        <th>Mid Lat [frames]</th>
+                        <th>Mid Lat [ms]</th>
+                        <th>High Lat [frames]</th>
+                        <th>High Lat [ms]</th>
+                        <th>Low Time [s]</th>
+                        <th>Mid Time [s]</th>
+                        <th>High Time [s]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="element" id="midLatFrames"></td>
+                        <td class="element" id="midLatMs"></td>
+                        <td class="element" id="highLatFrames"></td>
+                        <td class="element" id="highLatMs"></td>
+                        <td class="element" id="lowTime"></td>
+                        <td class="element" id="midTime"></td>
+                        <td class="element" id="highTime"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>Visit <a href="https://nvlabs.github.io/WebFPSci/">this link</a> to experiment more!</p>
         </div>
     </div>
 
@@ -447,20 +495,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
                 <br>
             </p>
             <h2>Click to Resume</h2>
-        </div>
-    </div>
-
-    <div id="sandboxInstructions" class="instructions">
-        <div>
-            <h1>Click to Resume</h1>
-            <p>
-                Shoot: Left Mouse<br/>
-                Move: WASD (or arrows)<br/>
-                Run: SHIFT<br/>
-                Jump: SPACE<br/>
-                Look: Mouse</br>
-                Reset score banner: R
-            </p>
         </div>
     </div>
 

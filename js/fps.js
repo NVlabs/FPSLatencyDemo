@@ -33,7 +33,7 @@ const TARGET_JUMP = true;
 const TARGET_CROUCH = true;
 
 // States that the experiment progresses through
-const states = ["sensitivity", "latency", "measurement", "sandbox"]
+const states = ["sensitivity", "latency", "measurement"]
 var stateIdx = -1;
 var state = "sensitivity";           // Start out in sensitivity adjustment 
 var inMeas = false;                  // Measurement state flag
@@ -109,14 +109,6 @@ var nextState = function(){
     latencyDiv.style.visibility = 'hidden';
     timerDiv.style.visibility = 'visible';
   }
-  else if(state == "sandbox"){
-    dat.GUI.toggleHide(); // Show "sandbox" controls
-    timerDiv.style.visibility = 'hidden';
-    results.style.visibility = 'hidden';
-    bannerDiv.style.visibility = 'visible';
-    latencySlider.style.top = '110%';
-    latencySlider.style.visibility = 'visible';
-  }
   
   makeScene();
   updateInstructions();
@@ -158,6 +150,7 @@ const midlatresult = document.getElementById("midlatresult");
 const highlatresult = document.getElementById("highlatresult");
 const middiffresult = document.getElementById("middiffresult");
 const highdiffresult = document.getElementById("highdiffresult");
+const csvresults = document.getElementById("csv_string");
 var resultsDisplayed = false;
 
 var showResults = function(){
@@ -178,13 +171,22 @@ var showResults = function(){
   const high_lat_dt = (lowLatTot - highLatTot); const high_lat_dAcc = lowLatAcc - highLatAcc;
   highdiffresult.innerHTML = `<p>${1e3*high_lat_dt.toFixed(1)} ms decrease in time on target</p><p>${high_lat_dAcc.toFixed(1)}% reduction in accuracy</p>`;
 
+  document.getElementById("midLatFrames").innerText = midLat;
+  document.getElementById("midLatMs").innerText = midLatDiff.toFixed(1);
+  document.getElementById("highLatFrames").innerText = highLat;
+  document.getElementById("highLatMs").innerText = highLatDiff.toFixed(1);
+  document.getElementById("lowTime").innerText = lowLatTot.toFixed(3);
+  document.getElementById("midTime").innerText = midLatTot.toFixed(3);
+  document.getElementById("highTime").innerText = highLatTot.toFixed(3);
+
   results.style.visibility = 'visible';
   if (fpsControls.enabled) {
     rawInputState.enable(false);
   }
   fpsControls.enabled = false;
-  // document.exitPointerLock();
   resultsDisplayed = true;
+  document.exitPointerLock();
+  measurementInstructions.style.display = 'none';
   bannerDiv.style.visibility = 'hidden';
 }
 
@@ -600,7 +602,7 @@ THREE.FirstPersonControls = function ( camera, scene, jumpHeight = config.player
       if(config.render.c2p.mode == 'delayed') c2p.material.color = new  THREE.Color(config.render.c2p.downColor);
       break;
     case GameInputEventType.FIRE_END:
-      if(state == 'sandbox' || referenceTarget) clickShot = false; // Require click and hold only in sandbox
+      if(referenceTarget) clickShot = false; // Require click only for reference
       if(config.render.c2p.mode == 'delayed') c2p.material.color = new THREE.Color(config.render.c2p.upColor);
       break;
     case GameInputEventType.JUMP:
@@ -747,7 +749,6 @@ THREE.FirstPersonControls = function ( camera, scene, jumpHeight = config.player
 const sensitivityInstructions = document.getElementById("sensInstructions");
 const latencyInstructions = document.getElementById("latInstructions");
 const measurementInstructions = document.getElementById("measInstructions");
-const sandboxInstructions = document.getElementById("sandboxInstructions");
 var instructions = sensitivityInstructions;
 
 var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;      // Check for pointer lock option
@@ -766,11 +767,10 @@ if ( havePointerLock ) {
       instructions.style.display = 'none';
       if(state == 'measurement' && !referenceTarget) inMeas = true;
     } 
-    else {
-      if (fpsControls.enabled)
-        rawInputState.enable(false);
+    else if(!resultsDisplayed) {    // Don't allow re-entering FPS mode when results displayed
+      if (fpsControls.enabled) rawInputState.enable(false);
       fpsControls.enabled = false;
-        // Click handler for pointer lock
+      // Click handler for pointer lock
       instructions.addEventListener( 'click', plClickListener, false);
       instructions.style.display = '-webkit-box';
       if(state == 'measurement') inMeas = false;
@@ -838,7 +838,7 @@ var keyDownHandler = function (event) {
         sensitivitySlider.stepUp(1);
         sensitivitySlider.oninput();
       }
-      else if(state == "latency" || state == "sandbox") {
+      else if(state == "latency") {
         latencySlider.stepUp(1);
         latencySlider.oninput();
       }
@@ -848,7 +848,7 @@ var keyDownHandler = function (event) {
         sensitivitySlider.stepDown(1);
         sensitivitySlider.oninput();
       }
-      else if(state == "latency" || state == "sandbox") {
+      else if(state == "latency") {
         latencySlider.stepDown(1);
         latencySlider.oninput();
       }
@@ -860,7 +860,7 @@ var keyDownHandler = function (event) {
       }
       break;
     case 13: // Enter key press
-      if(state == "sensitivity" || state == "latency" || (state == "measurement" && resultsDisplayed)){
+      if(state == "sensitivity" || state == "latency"){
         nextState();
       }
       break;
@@ -1476,7 +1476,6 @@ function updateInstructions() {
   sensitivityInstructions.style.display = 'none';
   latencyInstructions.style.display = 'none';
   measurementInstructions.style.display = 'none';
-  sandboxInstructions.style.display = 'none';
   bannerDiv.style.display = 'none';
   
   if (state == "sensitivity"){
@@ -1487,10 +1486,6 @@ function updateInstructions() {
   }
   else if (state == "measurement"){
     instructions = measurementInstructions;
-  }
-  else if(state =="sandbox"){
-    bannerDiv.style.display = '-webkit-box';
-    instructions = sandboxInstructions;
   }
 
   // Go back to pointer mode
@@ -1513,7 +1508,7 @@ function resetBannerStats() {
  */
 window.onload = function() {
  makeGUI();
- dat.GUI.toggleHide();             // Hide sandbox control
+ dat.GUI.toggleHide();             // Hide menu control
  updateInstructions();
 };
 
