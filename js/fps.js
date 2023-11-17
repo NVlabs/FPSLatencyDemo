@@ -360,6 +360,8 @@ const MIN_FRAME_RATE = getURLParamIfPresent('warnFrameRate', 30); // Below this 
 const INITIAL_LATENCY_MS = getURLParamIfPresent('defaultLatencyMs', 66); // This is the initial target latency
 const INITIAL_LATENCY_FRAMES = getURLParamIfPresent('defaultLatencyFrames', -1); // This is the target latency in frames (unused if -1)
 
+sensitivitySlider.value = config.player.mouseSensitivity;
+
 function exportConfig(){
   var a = document.createElement('a');
   a.download = "config.json";
