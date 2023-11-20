@@ -189,27 +189,27 @@ var showResults = function(){
   bannerDiv.style.visibility = 'hidden';
 }
 
-function copyTable() {
-  var results_table = document.getElementById("results_table").outerHTML;
-  navigator.clipboard.writeText(results_table).then(function() {
-    console.log('Table copied to clipboard');
-  }).catch(function(err) {
-    console.error('Could not copy text: ', err);
-  });
-}
+// Copies the table to the clipboard as a tab-separated value format (TSV)
+function copyTableTSV(includeHeaders) {
+  var table = document.getElementById("results_table");
+  var rows = table.rows;
+  var tsvContent = "";
+  var startRow = includeHeaders ? 0 : 1; // Start from 0 to include headers, 1 to exclude
 
-function copyTableRows() {
-  var rows = document.getElementById("results_table").rows;
-  var textToCopy = "";
-  for (var i = 1; i < rows.length; i++) { // Start from 1 to exclude headers
-      for (var j = 0; j < rows[i].cells.length; j++) {
-          textToCopy += rows[i].cells[j].innerText + (j === rows[i].cells.length - 1 ? '' : '\t');
+  for (var i = startRow; i < rows.length; i++) {
+      var row = [], cols = rows[i].querySelectorAll("td, th");
+
+      for (var j = 0; j < cols.length; j++) {
+          // Replace any tab characters in the cell text with spaces to avoid misformatting
+          var cellText = cols[j].innerText.replace(/\t/g, " ");
+          row.push(cellText);
       }
-      textToCopy += '\n';
+
+      tsvContent += row.join("\t") + "\n"; // Join cells with tabs
   }
 
-  navigator.clipboard.writeText(textToCopy).then(function() {
-      console.log('Table row copied to clipboard');
+  navigator.clipboard.writeText(tsvContent).then(function() {
+      console.log('Table ' + (includeHeaders ? 'with headers' : 'data only') + ' copied to clipboard as TSV');
   }).catch(function(err) {
       console.error('Could not copy text: ', err);
   });
