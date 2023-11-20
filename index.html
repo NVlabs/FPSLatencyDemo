@@ -21,6 +21,28 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
 
 <style>
+    :root {
+        /* General NVIDIA styling */
+        --nv_green: #76b900;
+        --nv_font: 'Trebuchet MS';
+
+        /* Colors for results */
+        --low_lat_color: #8FCB9B;
+        --low_lat_shadow: #588a00;
+        --mid_lat_color: #FFCBA4;
+        --mid_lat_shadow: rgb(175, 137, 0);
+        --high_lat_color: #FF6A6A;
+        --high_lat_shadow: rgb(175, 50, 50);
+
+        /* Other colors and styling */
+        --table_text: #DEDEDE;
+        --default_text: white;
+        --default_shadow: #9E9E9E;
+        --button_text: black;
+        --buton_bg: var(--nv_green);
+        --banner_bg: rgba(0,0,0,0.7);
+    }
+
     .instructions {
         position: absolute;
 
@@ -47,14 +69,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         -moz-box-align: center;
         box-align: center;
 
-        color: #ffffff;
-        background-color: rgba(0,0,0,0.5);
+        color: var(--default_text);
+        text-shadow: 1px 1px 1px var(--default_shadow);
+        background-color: var(--banner_bg);
 
         text-align: center;
-        font-family: 'Trebuchet MS';
+        font-family: var(--nv_font);
         font-size: 14px;
         line-height: 24px;
-        text-shadow: 1px 1px 1px #9E9E9E;
     }
 
     .custom_container{
@@ -65,10 +87,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
 
     .custom_container p {
         text-align: center;
-        font-family: 'Trebuchet MS';
+        font-family: var(--nv_font);
         font-size: 20px;
-        color: #FFF;
-        text-shadow: 1px 1px 1px #9E9E9E;
+        color: var(--default_text);
+        text-shadow: 1px 1px 1px var(--default_shadow);
     }
 
     .fps_label{
@@ -147,7 +169,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
 
     /* On checked, set to active color */
     .checkbox_label input:checked ~ .checkmark {
-        background-color: #76b900;
+        background-color: var(--nv_green);
     }
 
     /* Show the checkmark when checked */
@@ -191,8 +213,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
 
     table, th, td {
         border: 1px solid white;
-        color: #DEDEDE;
-        text-shadow: 1px 1px 1px #9E9E9E;
+        color: var(--table_text);
+        text-shadow: 1px 1px 1px var(--default_shadow);
     }
 
     table {
@@ -204,14 +226,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
     }
 
     a:link, a:visited {
-        color: #76b900;
+        color: var(--nv_green);
     }
 
     button {
-        background-color: #76B900;
         border: none;
-        color: black;
-        font: 'Trebuchet MS';
+        color: var(--button_text);
+        background-color: var(--buton_bg);
+        font: var(--nv_font);
         font-size: 16px;
         border-radius: 10px;
         padding: 5px 15px;
@@ -228,7 +250,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         appearance: none;
         width: 25px;
         height: 25px;
-        background: #76b900;
+        background: var(--nv_green);
         cursor: pointer;
         border-radius: 50%;
     }
@@ -236,7 +258,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
     .custom_slider::-moz-range-thumb {
         width: 25px;
         height: 25px;
-        background: #76b900;
+        background: var(--nv_green);
         cursor: pointer;
         border-radius: 50%;
     }
@@ -251,13 +273,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         background: rgba(0,0,0, 0.5);
 
         text-align: center;
-        font-family: 'Trebuchet MS';
+        font-family: var(--nv_font);
         font-size: 12pt;
     }
 
     #banner h1 {
         display: inline-block;
-        color: #fff;
+        color: var(--default_text);
         width: 30%;
     }
 
@@ -268,10 +290,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         left: 15%;
         top: 20%;
     
-        color: #BEBEBE;
-        text-shadow: 1px 1px 1px #9E9E9E;
         position: absolute;
-        background-color: rgba(0,0,0,0.5);
+        background-color: var(--banner_bg);
 
         /* display: -webkit-box;
         display: -moz-box;
@@ -290,9 +310,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         -moz-box-align: center;
         box-align: center;
 
-        color: #ffffff;
+        color: var(--default_text);
+        text-shadow: 1px 1px 1px var(--default_shadow);
         text-align: center;
-        font-family: 'Trebuchet MS';
+        font-family: var(--nv_font);
         font-size: 14px;
         line-height: 24px;
     }
@@ -305,26 +326,26 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         height: 40%;
 
         text-align: center;
-        font-family: 'Trebuchet MS';
+        font-family: var(--nv_font);
         font-size: 18px;
     }
 
     #lowlatresult {
         left: 0;
-        color: #8FCB9B;
-        text-shadow: 1px 1px 1px #588a00;
+        color: var(--low_lat_color);
+        text-shadow: 1px 1px 1px var(--low_lat_shadow);
     }
 
     #midlatresult {
         left:33%;
-        color: #FFCBA4;
-        text-shadow: 1px 1px 1px rgb(175, 137, 0);
+        color: var(--mid_lat_color);
+        text-shadow: 1px 1px 1px var(--mid_lat_shadow);
     }
 
     #highlatresult {
         left:66%;
-        color: #FF6A6A;
-        text-shadow: 1px 1px 1px rgb(175, 50, 50);
+        color: var(--high_lat_color);
+        text-shadow: 1px 1px 1px var(--high_lat_shadow);
     }
 
     #middiffresult, #highdiffresult {
@@ -334,20 +355,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         top: 50%;
         
         text-align: center;
-        font-family: 'Trebuchet MS';
+        font-family: var(--nv_font);
         font-size: 20px;
     }
 
     #middiffresult {
         left: 0;
-        color: #FFCBA4;
-        text-shadow: rgb(175, 137, 0);
+        color: var(--mid_lat_color);
+        text-shadow: var(--mid_lat_shadow);
     }
 
     #highdiffresult {
         left: 50%;
-        color:#FF6A6A;
-        text-shadow: rgb(175, 50, 50);
+        color:var(--high_lat_color);
+        text-shadow: var(--high_lat_shadow);
     }
 
     #finalInstructions {
@@ -357,29 +378,29 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         top: 75%;
 
         text-align: center;
-        font-family: 'Trebuchet MS';
+        font-family: var(--nv_font);
         font-size: 15px;
     }
 
     /* Re-style the dat.gui elements (NV green where possible/easy) */
     .dg *{
-        font-family: 'Trebuchet MS';
+        font-family: var(--nv_font);
     }
     
     .dg .c .slider-fg{
-        background: #76B900 !important;
+        background: var(--nv_green) !important;
     }
 
     .dg .cr.number {
-        border-left: 3px solid #76B900 !important;
+        border-left: 3px solid var(--nv_green) !important;
     }
 
     .dg .cr.boolean {
-    border-left: 3px solid #76B900 !important;
+    border-left: 3px solid var(--nv_green) !important;
     }
 
     .dg .cr.number input[type=text] {
-        color: #76B900 !important;
+        color: var(--nv_green) !important;
     }
 
 
