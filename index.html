@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
     :root {
         /* General NVIDIA styling */
         --nv_green: #76b900;
-        --nv_font: 'Trebuchet MS';
+        --nv_font: 'Trebuchet MS', Arial, Helvetica, sans-serif;
 
         /* Colors for results */
         --low_lat_color: #76b900;
@@ -208,10 +208,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         transition: opacity .2s;
     }
 
-    .results_table{
+    #results_table{
+        width: 80%;
+        display: none;
+
         margin-left: auto;
         margin-right:auto;
-        width: 80%;
+        margin-top: 10px;
     }
 
     table, th, td {
@@ -235,11 +238,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         border: none;
         color: var(--button_text);
         background-color: var(--buton_bg);
-        font: var(--nv_font);
+        font-family: var(--nv_font);
         font-size: 16px;
         border-radius: 10px;
         padding: 5px 15px;
-        margin-top: 5px;
         cursor: pointer;
     }
 
@@ -369,7 +371,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         color:var(--high_lat_color);
     }
 
-    #finalInstructions {
+    #resultsActions {
         position: absolute;
         width: 100%;
         height: 10%;
@@ -380,7 +382,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         font-size: 15px;
     }
 
-    #finalInstructions p {
+    #resultsActions p {
         color: var(--low_contrast_text);
     }
 
@@ -428,8 +430,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         <div id='highlatresult'></div>
         <div id="middiffresult"></div>
         <div id='highdiffresult'></div>
-        <div id='finalInstructions'>
-            <table id="results_table" class="results_table">
+        <div id='resultsActions'>
+            <button onclick="copyTableTSV(true)">Copy Table</button>
+            <button onclick="copyTableTSV(false)">Copy Row</button>
+            <button onclick="downloadTableAsCSV(true)">Full CSV</button>
+            <button onclick="downloadTableAsCSV(false)">CSV Row</button>
+            <button id="toggleResultsVis" onclick="toggleResultsVisible()">Show Table</button>
+            <br>
+            <table id="results_table">
                 <thead>
                     <tr>
                         <th>Mid Lat [frames]</th>
@@ -453,10 +461,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
                     </tr>
                 </tbody>
             </table>
-            <button onclick="copyTableTSV(true)">Copy Table</button>
-            <button onclick="copyTableTSV(false)">Copy Row</button>
-            <button onclick="downloadTableAsCSV(true)">Full CSV</button>
-            <button onclick="downloadTableAsCSV(false)">CSV Row</button>
             <p>Visit <a href="https://nvlabs.github.io/WebFPSci/">this link</a> to experiment more!</p>
         </div>
     </div>
