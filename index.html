@@ -27,12 +27,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         --nv_font: 'Trebuchet MS';
 
         /* Colors for results */
-        --low_lat_color: #8FCB9B;
-        --low_lat_shadow: #588a00;
-        --mid_lat_color: #FFCBA4;
-        --mid_lat_shadow: #af8900;
-        --high_lat_color: #FF6A6A;
-        --high_lat_shadow: #af3232;
+        --low_lat_color: #76b900;
+        --mid_lat_color: #da8300;
+        --high_lat_color: #d50000;
+        --lat_result_outline: 0.3px #ffffff;
 
         /* Other colors and styling */
         --default_text: #ffffff;
@@ -331,24 +329,22 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         text-align: center;
         font-family: var(--nv_font);
         font-size: 18px;
+        -webkit-text-stroke: var(--lat_result_outline);
     }
 
     #lowlatresult {
         left: 0;
         color: var(--low_lat_color);
-        text-shadow: 1px 1px 1px var(--low_lat_shadow);
     }
 
     #midlatresult {
         left:33%;
         color: var(--mid_lat_color);
-        text-shadow: 1px 1px 1px var(--mid_lat_shadow);
     }
 
     #highlatresult {
         left:66%;
         color: var(--high_lat_color);
-        text-shadow: 1px 1px 1px var(--high_lat_shadow);
     }
 
     #middiffresult, #highdiffresult {
@@ -360,18 +356,17 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         text-align: center;
         font-family: var(--nv_font);
         font-size: 20px;
+        -webkit-text-stroke: var(--lat_result_outline);
     }
 
     #middiffresult {
         left: 0;
         color: var(--mid_lat_color);
-        text-shadow: 1px 1px 1px var(--mid_lat_shadow);
     }
 
     #highdiffresult {
         left: 50%;
         color:var(--high_lat_color);
-        text-shadow: 1px 1px 1px var(--high_lat_shadow);
     }
 
     #finalInstructions {
