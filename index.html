@@ -208,10 +208,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         transition: opacity .2s;
     }
 
-    .results_table{
+    #results_table{
+        width: 80%;
+        display: none;
+
         margin-left: auto;
         margin-right:auto;
-        width: 80%;
+        margin-top: 10px;
     }
 
     table, th, td {
@@ -239,7 +242,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         font-size: 16px;
         border-radius: 10px;
         padding: 5px 15px;
-        margin-top: 5px;
         cursor: pointer;
     }
 
@@ -429,7 +431,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         <div id="middiffresult"></div>
         <div id='highdiffresult'></div>
         <div id='finalInstructions'>
-            <table id="results_table" class="results_table">
+            <button onclick="copyTableTSV(true)">Copy Table</button>
+            <button onclick="copyTableTSV(false)">Copy Row</button>
+            <button onclick="downloadTableAsCSV(true)">Full CSV</button>
+            <button onclick="downloadTableAsCSV(false)">CSV Row</button>
+            <button id="toggleResultsVis" onclick="toggleResultsVisible()">Show Table</button>
+            <br>
+            <table id="results_table">
                 <thead>
                     <tr>
                         <th>Mid Lat [frames]</th>
@@ -453,10 +461,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
                     </tr>
                 </tbody>
             </table>
-            <button onclick="copyTableTSV(true)">Copy Table</button>
-            <button onclick="copyTableTSV(false)">Copy Row</button>
-            <button onclick="downloadTableAsCSV(true)">Full CSV</button>
-            <button onclick="downloadTableAsCSV(false)">CSV Row</button>
             <p>Visit <a href="https://nvlabs.github.io/WebFPSci/">this link</a> to experiment more!</p>
         </div>
     </div>

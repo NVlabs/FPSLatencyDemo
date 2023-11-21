@@ -150,6 +150,7 @@ const midlatresult = document.getElementById("midlatresult");
 const highlatresult = document.getElementById("highlatresult");
 const middiffresult = document.getElementById("middiffresult");
 const highdiffresult = document.getElementById("highdiffresult");
+const resultsTable = document.getElementById("results_table");
 var resultsDisplayed = false;
 
 var showResults = function(){
@@ -191,8 +192,7 @@ var showResults = function(){
 
 // Copies the table to the clipboard as a tab-separated value format (TSV)
 function copyTableTSV(includeHeaders) {
-  var table = document.getElementById("results_table");
-  var rows = table.rows;
+  var rows = resultsTable.rows;
   var tsvContent = "";
   var startRow = includeHeaders ? 0 : 1; // Start from 0 to include headers, 1 to exclude
 
@@ -228,8 +228,7 @@ function downloadCSV(csvContent, filename) {
 }
 
 function downloadTableAsCSV(includeHeaders) {
-  var results_table = document.getElementById("results_table");
-  var rows = results_table.rows;
+  var rows = resultsTable.rows;
   var csvContent = "";
 
   var startRow = includeHeaders ? 0 : 1; // Start from 1 to exclude headers
@@ -246,6 +245,19 @@ function downloadTableAsCSV(includeHeaders) {
 
   downloadCSV(csvContent, includeHeaders ? 'full_table.csv' : 'data_only.csv');
 }
+
+function toggleResultsVisible() {
+  const toggleBtn = document.getElementById('toggleResultsVis');
+  if(resultsTable.style.display == 'none'){
+    resultsTable.style.display = 'table';
+    toggleBtn.innerText = 'Hide Table';
+  }
+  else {
+    resultsTable.style.display = 'none'; 
+    toggleBtn.innerText = 'Show Table';
+  }
+}
+toggleResultsVisible();
 
 // Configuration
 
