@@ -160,15 +160,15 @@ var showResults = function(){
 
   const midLatDiff = midLat * frameTimes.avg();
   const highLatDiff = highLat * frameTimes.avg();
-  lowlatresult.innerHTML = `<h1>Minimum Latency</h1><p>&nbsp;</p><p>Avg Time on Target: ${lowLatTot.toFixed(3)} s</p><p>Accuracy: ${lowLatAcc.toFixed(1)}%</p>`;
-  midlatresult.innerHTML = `<h1>${midLat} frames of Latency</h1><h2>(Added latency of ${midLatDiff.toFixed(1)}ms)</h2><p>Avg Time on Target: ${midLatTot.toFixed(3)} s</p><p>Accuracy: ${midLatAcc.toFixed(1)}%</p>`;
-  highlatresult.innerHTML = `<h1>${highLat} frames of Latency</h1><h2>(Added latency of ${highLatDiff.toFixed(1)}ms)</h2><p>Avg Time on Target: ${highLatTot.toFixed(3)} s</p><p>Accuracy: ${highLatAcc.toFixed(1)}%</p>`;
+  lowlatresult.innerHTML = `<h1>Minimum Latency</h1><p>0 Frames Delayed</p><br><h2>Time on Target: ${lowLatTot.toFixed(3)} s</h2><p>Accuracy: ${lowLatAcc.toFixed(1)}%</p>`;
+  midlatresult.innerHTML = `<h1>+ ${midLatDiff.toFixed(1)} ms Latency</h1><p>${midLat} Frames Delayed</p><br><h2>Time on Target: ${midLatTot.toFixed(3)} s</h2><p>Accuracy: ${midLatAcc.toFixed(1)}%</p>`;
+  highlatresult.innerHTML = `<h1>+ ${highLatDiff.toFixed(1)} ms Latency</h1><p>${highLat} Frames Delayed</p><br><h2>Time on Target: ${highLatTot.toFixed(3)} s</h2><p>Accuracy: ${highLatAcc.toFixed(1)}%</p>`;
   
   const mid_lat_dt = (lowLatTot - midLatTot); const mid_lat_dAcc = lowLatAcc - midLatAcc;
-  middiffresult.innerHTML = `<p>${1e3*mid_lat_dt.toFixed(1)} ms decrease in time on target</p><p>${mid_lat_dAcc.toFixed(1)}% reduction in accuracy</p>`;
+  middiffresult.innerHTML = `<h2>${1e3*mid_lat_dt.toFixed(1)} ms decrease in time on target</h2><p>${mid_lat_dAcc.toFixed(1)}% reduction in accuracy</p>`;
   
   const high_lat_dt = (lowLatTot - highLatTot); const high_lat_dAcc = lowLatAcc - highLatAcc;
-  highdiffresult.innerHTML = `<p>${1e3*high_lat_dt.toFixed(1)} ms decrease in time on target</p><p>${high_lat_dAcc.toFixed(1)}% reduction in accuracy</p>`;
+  highdiffresult.innerHTML = `<h2>${1e3*high_lat_dt.toFixed(1)} ms decrease in time on target</h2><p>${high_lat_dAcc.toFixed(1)}% reduction in accuracy</p>`;
 
   document.getElementById("midLatFrames").innerText = midLat;
   document.getElementById("midLatMs").innerText = midLatDiff.toFixed(1);
