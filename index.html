@@ -35,11 +35,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         --high_lat_shadow: #af3232;
 
         /* Other colors and styling */
-        --table_text: #DEDEDE;
         --default_text: #ffffff;
         --default_shadow: #9E9E9E;
+        --low_contrast_text: #808080;
+
+        --table_text: #DEDEDE;
+        --table_outline: 2px solid #808080;
+
         --button_text: #000000;
         --buton_bg: var(--nv_green);
+        
         --banner_bg: rgba(0,0,0,0.7);
     }
 
@@ -212,7 +217,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
     }
 
     table, th, td {
-        border: 1px solid white;
+        border: var(--table_outline);
         color: var(--table_text);
     }
 
@@ -378,6 +383,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         text-align: center;
         font-family: var(--nv_font);
         font-size: 15px;
+    }
+
+    #finalInstructions p {
+        color: var(--low_contrast_text);
     }
 
     /* Re-style the dat.gui elements (NV green where possible/easy) */
