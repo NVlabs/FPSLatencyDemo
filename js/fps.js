@@ -87,6 +87,7 @@ var nextState = function(){
     }
   }
   if(state == "latency") { // Moving into latency adjustment state
+    console.log(`Using a sensitivity value of ${config.player.mouseSensitivity}`)
     if(useFixedFrameDelays) { // Use fixed delays, skip this state
       state = 'measurement';
       stateIdx += 1;
