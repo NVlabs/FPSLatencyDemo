@@ -474,7 +474,7 @@ if (FRAME_DELAYS_STR.length > 0) {
   const fd_fields = FRAME_DELAYS_STR.split(',')
   // Parse integer frame delays from CSV string
   for(var i = 0; i < fd_fields.length; i++) {
-    fixedFrameDelays.push(parseInt(fd_fields[i].trim()));
+    fixedFrameDelays.push(parseInt(fd_fields[i].trim().replace(/['"]+/g, '')));
   }
 }
 sensitivitySlider.value = config.player.mouseSensitivity; // Initialize sensitivity slider from player mouse sensitivity
