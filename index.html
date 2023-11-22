@@ -455,10 +455,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         <div id='highdiffresult'></div>
         <div id='resultsActions'>
             <button onclick="copyTableTSV(true)">Copy Table</button>
-            <button onclick="copyTableTSV(false)">Copy Row</button>
+            <button id="copyRowBtn" onclick="copyTableTSV(false)">Copy Row</button>
             <button onclick="downloadTableAsCSV(true)">Full CSV</button>
-            <button onclick="downloadTableAsCSV(false)">CSV Row</button>
-            <button id="toggleResultsVis" onclick="toggleResultsVisible()">Show Table</button>
+            <button id="dlRowBtn" onclick="downloadTableAsCSV(false)">CSV Row</button>
+            <button id="toggleResultsVis" onclick="toggleResultsTableVisible()">Show Table</button>
             <br>
             <table id="results_table">
                 <thead>

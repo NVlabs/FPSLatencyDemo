@@ -73,7 +73,12 @@ var nextState = function(){
   stateIdx += 1;
   clickShot = false; // Stop firing
   if(stateIdx >= states.length) stateIdx = states.length - 1;
-  state = states[stateIdx];
+  if(fixedFrameDelays.length > 0) {
+    // Constant frame delays have been provided, skip sensitivity and latency adjustment
+    state = "measurement"
+    sensitivityDiv.style.visibility = 'hidden';
+  }
+  else state = states[stateIdx];
   // Apply state-based changes
   if(state == "sensitivity") {
     sensitivityDiv.style.visibility = 'visible';
@@ -96,16 +101,21 @@ var nextState = function(){
   }
   else if(state == "measurement") {
     // Build up our latency conditions based on the JND latency here
-    var jnd_lat = config.render.frameDelay;
-    if(jnd_lat == 0 || jnd_lat == 1) measLatencies = [0,1,2]; // Case where user specifies 0 JND
-    else if(jnd_lat > 1) {
-      measLatencies.push(Math.round(jnd_lat / 2));
-      measLatencies.push(jnd_lat);
+    if (fixedFrameDelays.length == 0){
+      var jnd_lat = config.render.frameDelay;
+      if(jnd_lat == 0 || jnd_lat == 1) measLatencies = [0,1,2]; // Case where user specifies 0 JND
+      else if(jnd_lat > 1) {
+        measLatencies.push(Math.round(jnd_lat / 2));
+        measLatencies.push(jnd_lat);
+      }
+      measLatencies = measLatencies.sort(function(a,b) {return b-a;})
+      console.log('Selected JND of ' +  jnd_lat)
     }
-    measLatencies = measLatencies.sort(function(a,b) {return b-a;})
+    else measLatencies = fixedFrameDelays;
     // Optionally randomize the condition order
     if(RANDOM_ORDER) measLatencies.sort(() => Math.random() - 0.5);
-    console.log('Selected JND of ' +  jnd_lat + ', Testing ' + measLatencies)
+    console.log('Testing conditions: ' + measLatencies);
+    measHeader.innerText = `Measurement Phase ${measLatIndex+1}/${measLatencies.length}`
     latencyDiv.style.visibility = 'hidden';
     timerDiv.style.visibility = 'visible';
   }
@@ -127,7 +137,7 @@ var nextMeasCondition = function(){
   measLatIndex += 1;  // Increment to next measurement
   if(measLatIndex < measLatencies.length) {
     set_latency(measLatencies[measLatIndex]) // Set the new latency
-    measHeader.innerText = `Measurement Phase ${measLatIndex+1}/3`
+    measHeader.innerText = `Measurement Phase ${measLatIndex+1}/${measLatencies.length}`
     timeRemainingS = MEAS_DUR_S;
     timeIndicator.innerText = timeRemainingS.toFixed(2) + "s";
     makeScene();
@@ -155,29 +165,55 @@ var resultsDisplayed = false;
 
 var showResults = function(){
   const sortedConds = measLatencies.sort(function(a,b) {return a-b});    // This should sort low latency, mid latency, high latency
-  const lowLat = sortedConds[0]; const midLat = sortedConds[1]; const highLat = sortedConds[2];
-  const lowLatTot = totResults[lowLat]; const midLatTot = totResults[midLat]; const highLatTot = totResults[highLat];
-  const lowLatAcc = 100 * lowLatTot / MEAS_DUR_S; const midLatAcc = 100 * midLatTot / MEAS_DUR_S; const highLatAcc = 100 * highLatTot / MEAS_DUR_S;
+  const avgFrameTime = frameTimes.avg();
+  if(fixedFrameDelays.length == 0) { 
+    // No provided frame delays, this is a JND-style result, show colorized results
+    const lowLat = sortedConds[0]; const midLat = sortedConds[1]; const highLat = sortedConds[2];
+    const lowLatTot = totResults[lowLat]; const midLatTot = totResults[midLat]; const highLatTot = totResults[highLat];
+    const lowLatAcc = 100 * lowLatTot / MEAS_DUR_S; const midLatAcc = 100 * midLatTot / MEAS_DUR_S; const highLatAcc = 100 * highLatTot / MEAS_DUR_S;
 
-  const midLatDiff = midLat * frameTimes.avg();
-  const highLatDiff = highLat * frameTimes.avg();
-  lowlatresult.innerHTML = `<h1>Minimum Latency</h1><p>0 Frames Delayed</p><br><h2>Time on Target: ${lowLatTot.toFixed(3)} s</h2><p>Accuracy: ${lowLatAcc.toFixed(1)}%</p>`;
-  midlatresult.innerHTML = `<h1>+ ${midLatDiff.toFixed(1)} ms Latency</h1><p>${midLat} Frames Delayed</p><br><h2>Time on Target: ${midLatTot.toFixed(3)} s</h2><p>Accuracy: ${midLatAcc.toFixed(1)}%</p>`;
-  highlatresult.innerHTML = `<h1>+ ${highLatDiff.toFixed(1)} ms Latency</h1><p>${highLat} Frames Delayed</p><br><h2>Time on Target: ${highLatTot.toFixed(3)} s</h2><p>Accuracy: ${highLatAcc.toFixed(1)}%</p>`;
-  
-  const mid_lat_dt = (lowLatTot - midLatTot); const mid_lat_dAcc = lowLatAcc - midLatAcc;
-  middiffresult.innerHTML = `<h2>${1e3*mid_lat_dt.toFixed(1)} ms decrease in time on target</h2><p>${mid_lat_dAcc.toFixed(1)}% reduction in accuracy</p>`;
-  
-  const high_lat_dt = (lowLatTot - highLatTot); const high_lat_dAcc = lowLatAcc - highLatAcc;
-  highdiffresult.innerHTML = `<h2>${1e3*high_lat_dt.toFixed(1)} ms decrease in time on target</h2><p>${high_lat_dAcc.toFixed(1)}% reduction in accuracy</p>`;
+    const midLatDiff = midLat * avgFrameTime;
+    const highLatDiff = highLat * avgFrameTime;
+    lowlatresult.innerHTML = `<h1>Minimum Latency</h1><p>0 Frames Delayed</p><br><h2>Time on Target: ${lowLatTot.toFixed(3)} s</h2><p>Accuracy: ${lowLatAcc.toFixed(1)}%</p>`;
+    midlatresult.innerHTML = `<h1>+ ${midLatDiff.toFixed(1)} ms Latency</h1><p>${midLat} Frames Delayed</p><br><h2>Time on Target: ${midLatTot.toFixed(3)} s</h2><p>Accuracy: ${midLatAcc.toFixed(1)}%</p>`;
+    highlatresult.innerHTML = `<h1>+ ${highLatDiff.toFixed(1)} ms Latency</h1><p>${highLat} Frames Delayed</p><br><h2>Time on Target: ${highLatTot.toFixed(3)} s</h2><p>Accuracy: ${highLatAcc.toFixed(1)}%</p>`;
+    
+    const mid_lat_dt = (lowLatTot - midLatTot); const mid_lat_dAcc = lowLatAcc - midLatAcc;
+    middiffresult.innerHTML = `<h2>${1e3*mid_lat_dt.toFixed(1)} ms decrease in time on target</h2><p>${mid_lat_dAcc.toFixed(1)}% reduction in accuracy</p>`;
+    
+    const high_lat_dt = (lowLatTot - highLatTot); const high_lat_dAcc = lowLatAcc - highLatAcc;
+    highdiffresult.innerHTML = `<h2>${1e3*high_lat_dt.toFixed(1)} ms decrease in time on target</h2><p>${high_lat_dAcc.toFixed(1)}% reduction in accuracy</p>`;
 
-  document.getElementById("midLatFrames").innerText = midLat;
-  document.getElementById("midLatMs").innerText = midLatDiff.toFixed(1);
-  document.getElementById("highLatFrames").innerText = highLat;
-  document.getElementById("highLatMs").innerText = highLatDiff.toFixed(1);
-  document.getElementById("lowTime").innerText = lowLatTot.toFixed(3);
-  document.getElementById("midTime").innerText = midLatTot.toFixed(3);
-  document.getElementById("highTime").innerText = highLatTot.toFixed(3);
+    document.getElementById("midLatFrames").innerText = midLat;
+    document.getElementById("midLatMs").innerText = midLatDiff.toFixed(1);
+    document.getElementById("highLatFrames").innerText = highLat;
+    document.getElementById("highLatMs").innerText = highLatDiff.toFixed(1);
+    document.getElementById("lowTime").innerText = lowLatTot.toFixed(3);
+    document.getElementById("midTime").innerText = midLatTot.toFixed(3);
+    document.getElementById("highTime").innerText = highLatTot.toFixed(3);
+  }
+  else { // This is a fixed condition experiment, just display the results table
+    lowlatresult.style.display = 'none';
+    midlatresult.style.display = 'none';
+    highlatresult.style.display = 'none';
+    middiffresult.style.display = 'none';
+    highdiffresult.style.display = 'none';
+
+    document.getElementById('resultsActions').style.top = '5%';
+    document.getElementById('copyRowBtn').innerText = 'Copy Rows';
+    document.getElementById('dlRowBtn').innerText = 'CSV Rows';
+    
+    resultsTable.innerHTML = `<thead>
+      <tr><th>Frame Delay</th><th>Added Latency [ms]</th><th>Time on Target</th><th>Accuracy</th></tr>
+    </thead>
+    <tbody>`
+    for(var i = 0; i < sortedConds.length; i++) {
+      var fd = sortedConds[i];
+      resultsTable.innerHTML += `\t<tr><td>${fd}</td><td>${(fd*avgFrameTime).toFixed(1)}</td><td>${totResults[fd]}</td><td>${(100*totResults[fd]/MEAS_DUR_S).toFixed(1)}%</td></tr>\n`
+    }
+    resultsTable.innerHTML += '</tbody>'
+    toggleResultsTableVisible();
+  }
 
   results.style.visibility = 'visible';
   if (fpsControls.enabled) {
@@ -246,7 +282,7 @@ function downloadTableAsCSV(includeHeaders) {
   downloadCSV(csvContent, includeHeaders ? 'full_table.csv' : 'data_only.csv');
 }
 
-function toggleResultsVisible() {
+function toggleResultsTableVisible() {
   const toggleBtn = document.getElementById('toggleResultsVis');
   if(resultsTable.style.display == 'none'){
     resultsTable.style.display = 'table';
@@ -257,7 +293,7 @@ function toggleResultsVisible() {
     toggleBtn.innerText = 'Show Table';
   }
 }
-toggleResultsVisible();
+toggleResultsTableVisible();
 
 // Configuration
 
@@ -430,8 +466,18 @@ const MEAS_DUR_S = getURLParamIfPresent('measurementDuration' , 60);  // Time to
 const MIN_FRAME_RATE = getURLParamIfPresent('warnFrameRate', 30); // Below this frame rate a warning is displayed
 const INITIAL_LATENCY_MS = getURLParamIfPresent('defaultLatencyMs', 66); // This is the initial target latency
 const INITIAL_LATENCY_FRAMES = getURLParamIfPresent('defaultLatencyFrames', -1); // This is the target latency in frames (unused if -1)
+const FRAME_DELAYS_STR = getURLParamIfPresent('frameDelays', ''); // This is an optional set of fixed conditions
 
-sensitivitySlider.value = config.player.mouseSensitivity;
+// Parse constant frame delays (if provided)
+var fixedFrameDelays = [];
+if (FRAME_DELAYS_STR.length > 0) {
+  const fd_fields = FRAME_DELAYS_STR.split(',')
+  // Parse integer frame delays from CSV string
+  for(var i = 0; i < fd_fields.length; i++) {
+    fixedFrameDelays.push(parseInt(fd_fields[i].trim()));
+  }
+}
+sensitivitySlider.value = config.player.mouseSensitivity; // Initialize sensitivity slider from player mouse sensitivity
 
 function exportConfig(){
   var a = document.createElement('a');
@@ -2011,7 +2057,10 @@ function animate() {
         if ( intersects.length > 0 ) {
           var intersect = intersects[ 0 ];                    // Get first hit
           if (targets.includes(intersect.object)){            // See if we hit a target first
-            if(!referenceTarget) hits++;
+            if(!referenceTarget) {
+              hits++;
+              if(inMeas)timeOnTarget += (now - last_update_time)/1000; // Track time spent on target
+            }
             var destroyed = damageTarget(intersect.object, intersect.point);   // Damage the target
             if(destroyed){
               makeExplodeSound();
@@ -2027,9 +2076,6 @@ function animate() {
                 target_times.push(intersect.object.duration);
                 spawnTarget();     // Replace this target with another like it
               }
-            }
-            if(inMeas) {
-              timeOnTarget += (now - last_update_time)/1000; // Track time spent on target
             }
           }
           else{                                               // Missed the target
