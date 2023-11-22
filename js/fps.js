@@ -73,35 +73,42 @@ var nextState = function(){
   stateIdx += 1;
   clickShot = false; // Stop firing
   if(stateIdx >= states.length) stateIdx = states.length - 1;
-  if(fixedFrameDelays.length > 0) {
-    // Constant frame delays have been provided, skip sensitivity and latency adjustment
-    state = "measurement"
-    sensitivityDiv.style.visibility = 'hidden';
-  }
-  else state = states[stateIdx];
+  state = states[stateIdx];
   // Apply state-based changes
   if(state == "sensitivity") {
-    sensitivityDiv.style.visibility = 'visible';
-    latencyDiv.style.visibility = 'hidden';
-    timerDiv.style.visibility = 'hidden';
+    if(useFixedSensitivity) { // Use fixed sensitivity, skip this state
+      state = 'latency';
+      stateIdx += 1;
+    }
+    else {
+      sensitivityDiv.style.visibility = 'visible';
+      latencyDiv.style.visibility = 'hidden';
+      timerDiv.style.visibility = 'hidden';
+    }
   }
-  else if(state == "latency") { // Moving into latency adjustment state
-    sensitivityDiv.style.visibility = 'hidden';
-    latencyDiv.style.visibility = 'visible';
-    // Set reasonable start latency
-    var avgFrameTime = frameTimes.avg();
-    console.log('Average frame time of ' + avgFrameTime + ' ms')
+  if(state == "latency") { // Moving into latency adjustment state
+    if(useFixedFrameDelays) { // Use fixed delays, skip this state
+      state = 'measurement';
+      stateIdx += 1;
+    }
+    else {
+      sensitivityDiv.style.visibility = 'hidden';
+      latencyDiv.style.visibility = 'visible';
+      // Set reasonable start latency
+      var avgFrameTime = frameTimes.avg();
+      console.log('Average frame time of ' + avgFrameTime + ' ms')
 
-    var delay_frames 
-    if (INITIAL_LATENCY_FRAMES > 0) delay_frames = INITIAL_LATENCY_FRAMES;
-    else delay_frames = Math.round(INITIAL_LATENCY_MS / frameTimes.avg());
-    latencySlider.value = delay_frames
-    latencySlider.oninput()
-    // set_latency(latencySlider.min); // Set the minimum latency
+      var delay_frames 
+      if (INITIAL_LATENCY_FRAMES > 0) delay_frames = INITIAL_LATENCY_FRAMES;
+      else delay_frames = Math.round(INITIAL_LATENCY_MS / frameTimes.avg());
+      latencySlider.value = delay_frames
+      latencySlider.oninput()
+      // set_latency(latencySlider.min); // Set the minimum latency
+    }
   }
-  else if(state == "measurement") {
+  if(state == "measurement") {
     // Build up our latency conditions based on the JND latency here
-    if (fixedFrameDelays.length == 0){
+    if (!useFixedFrameDelays){
       var jnd_lat = config.render.frameDelay;
       if(jnd_lat == 0 || jnd_lat == 1) measLatencies = [0,1,2]; // Case where user specifies 0 JND
       else if(jnd_lat > 1) {
@@ -111,11 +118,13 @@ var nextState = function(){
       measLatencies = measLatencies.sort(function(a,b) {return b-a;})
       console.log('Selected JND of ' +  jnd_lat)
     }
-    else measLatencies = fixedFrameDelays;
+    else measLatencies = fixedFrameDelays; // Use fixed frame delays
+
     // Optionally randomize the condition order
     if(RANDOM_ORDER) measLatencies.sort(() => Math.random() - 0.5);
     console.log('Testing conditions: ' + measLatencies);
     measHeader.innerText = `Measurement Phase ${measLatIndex+1}/${measLatencies.length}`
+    sensitivityDiv.style.visibility = 'hidden';
     latencyDiv.style.visibility = 'hidden';
     timerDiv.style.visibility = 'visible';
   }
@@ -166,7 +175,7 @@ var resultsDisplayed = false;
 var showResults = function(){
   const sortedConds = measLatencies.sort(function(a,b) {return a-b});    // This should sort low latency, mid latency, high latency
   const avgFrameTime = frameTimes.avg();
-  if(fixedFrameDelays.length == 0) { 
+  if(!useFixedFrameDelays) { 
     // No provided frame delays, this is a JND-style result, show colorized results
     const lowLat = sortedConds[0]; const midLat = sortedConds[1]; const highLat = sortedConds[2];
     const lowLatTot = totResults[lowLat]; const midLatTot = totResults[midLat]; const highLatTot = totResults[highLat];
@@ -300,7 +309,8 @@ toggleResultsTableVisible();
 // Method to get from URL params (if present)
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
-
+var useFixedSensitivity = false;  // Parameter to track whether fixed sensitivity was applied
+var useFixedFrameDelays = false;  // Parameter to track whether fixed frame delays were specified
 function getURLParamIfPresent(name, defaultValue){
   var value = defaultValue;
   if(urlParams.has(name)) {
@@ -316,6 +326,8 @@ function getURLParamIfPresent(name, defaultValue){
       value = defaultValue.constructor(urlParams.get(name));
     }
     console.log(name, value);   // Log settings to the console
+    if(name == 'mouseSensitivity') useFixedSensitivity = true;
+    else if(name == 'frameDelays') useFixedFrameDelays = true;
   }
   return value;
 }
@@ -470,7 +482,7 @@ const FRAME_DELAYS_STR = getURLParamIfPresent('frameDelays', ''); // This is an 
 
 // Parse constant frame delays (if provided)
 var fixedFrameDelays = [];
-if (FRAME_DELAYS_STR.length > 0) {
+if (useFixedFrameDelays) {
   const fd_fields = FRAME_DELAYS_STR.split(',')
   // Parse integer frame delays from CSV string
   for(var i = 0; i < fd_fields.length; i++) {
