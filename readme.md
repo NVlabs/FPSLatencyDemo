@@ -39,6 +39,7 @@ Typically JSON parameter names are _very_ similar to URL parameter names, but of
     * The frame rate at which to warn user for perf: `warnFrameRate` (`Number`) = `30`
     * The initial JND latency target in milliseconds (may not be accurate!): `defaultLatencyMs` (`Number`) = `66`
     * The initial JND latency target in frames (accurate, but deprioritized/scales w/ frame rate): `defaultLatencyFrames` (`Integer`) = `-1`
+    * Constant frame delays to test (skips latency and sensitivity adjustment): `frameDelays` (`CSV String`) = `''` (example usage: `frameDelays = 0,3,5,10`)
 
 * Rendering
     * Set frame rate?: `setFPS` (`Boolean`) = `False`
