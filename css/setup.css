@@ -98,3 +98,15 @@ button {
     display: block;
     margin-top: 20px;
 }
+
+/* Remove spinnders from number inputs */
+input[type="number"]::-webkit-inner-spin-button, 
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+/* Remove spinner for Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
