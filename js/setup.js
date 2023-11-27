@@ -3,17 +3,24 @@ function addUser() {
     var newUserDiv = document.createElement('div');
     newUserDiv.setAttribute('class', 'userSetting');
 
+    const userSettings = document.getElementsByClassName('userSetting');
+    const lastIdx = userSettings.length - 1;
+    const lastUserName = userSettings[lastIdx].getElementsByClassName('userName')[0].value;
+    const lastUserSensitivity = userSettings[lastIdx].getElementsByClassName('userSensitivity')[0].value;
+
     var userNameLabel = document.createElement('label');
     userNameLabel.textContent = "User Name:";
     var userNameInput = document.createElement('input');
     userNameInput.setAttribute('type', 'text');
     userNameInput.setAttribute('class', 'userName');
+    userNameInput.setAttribute('value', lastUserName);
 
     var sensitivityLabel = document.createElement('label');
     sensitivityLabel.textContent = "Sensitivity:";
     var sensitivityInput = document.createElement('input');
     sensitivityInput.setAttribute('type', 'number');
     sensitivityInput.setAttribute('class', 'userSensitivity');
+    sensitivityInput.setAttribute('value', lastUserSensitivity);
 
     newUserDiv.appendChild(userNameLabel);
     newUserDiv.appendChild(userNameInput);
