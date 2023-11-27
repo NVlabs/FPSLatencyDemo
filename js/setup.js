@@ -23,7 +23,6 @@ function addUser() {
     userSettingsDiv.appendChild(newUserDiv);
 }
 
-
 function generateLinks() {
     var frameRate = parseInt(document.getElementById('frameRate').value);
     var maxLatency = parseInt(document.getElementById('maxLatency').value);
@@ -55,6 +54,7 @@ function generateLinks() {
             var link = document.createElement('a');
             var url = `index.html?username=${encodeURIComponent(userName)}&mouseSensitivity=${userSensitivity}&frameDelays=${frameDelays.join(',')}&measurementDuration=${duration}`;
             link.setAttribute('href', url);
+            link.setAttribute('target', "_blank");
             link.textContent = `Link for ${userName}`;
             linksDiv.appendChild(link);
             linksDiv.appendChild(document.createElement('br'));
