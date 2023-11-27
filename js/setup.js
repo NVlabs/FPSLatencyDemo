@@ -28,6 +28,7 @@ function generateLinks() {
     var maxLatency = parseInt(document.getElementById('maxLatency').value);
     var numExperiences = parseInt(document.getElementById('numExperiences').value);
     var duration = document.getElementById('duration').value;
+    const randomizeOrder = document.getElementById('randomOrder').checked;
     var userSettings = document.getElementsByClassName('userSetting');
 
     var linksDiv = document.getElementById('links');
@@ -52,7 +53,7 @@ function generateLinks() {
             }
 
             var link = document.createElement('a');
-            var url = `index.html?username=${encodeURIComponent(userName)}&mouseSensitivity=${userSensitivity}&frameDelays=${frameDelays.join(',')}&measurementDuration=${duration}`;
+            var url = `index.html?username=${encodeURIComponent(userName)}&mouseSensitivity=${userSensitivity}&frameDelays=${frameDelays.join(',')}&measurementDuration=${duration}&randomizeOrder=${randomizeOrder}`;
             link.setAttribute('href', url);
             link.setAttribute('target', "_blank");
             link.textContent = `Link for ${userName}`;
