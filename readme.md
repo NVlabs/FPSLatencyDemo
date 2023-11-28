@@ -110,8 +110,8 @@ Typically JSON parameter names are _very_ similar to URL parameter names, but of
         * Min motion change time (new direction selection interval): `targetMinChangeTime` (`Number`) = `1`
         * Max motion change time (new direction selection interval): `targetMaxChangeTime` (`Number`) = `3`
     * Color (full/min health are interpolated between)
-        * Aim off target color: `offTargetColor` (`Color`) = `#00ff00`
-        * Aim on target color: `onTargetColor` (`Color`) = `#ff0000`
+        * Aim off target color: `offTargetColor` (`Color`) = `#d31286`
+        * Aim on target color: `onTargetColor` (`Color`) = `#91e600`
     * Spawn position (uniformly randomized in range)
         * Min spawn distance: `targetMinSpawnDistance` (`Number`) = `30`
         * Max spawn distance: `targetMaxSpawnDistance` (`Number`) = `30`
@@ -130,7 +130,7 @@ Typically JSON parameter names are _very_ similar to URL parameter names, but of
         * Min time between jumps/crouches: `targetMinJumpCrouchTime` (`Number`) = `1`
         * Max time between jumps/crouches: `targetMaxJumpCrouchTime` (`Number`) = `2`
     * Reference target (red target used to reset aim direction on reload/start of trial)
-        * Color: `refTargetColor` (`Color`) = `#ffff00`
+        * Color: `refTargetColor` (`Color`) = `#ffc800`
         * Size: `refTargetSize` (`Number`) = `1`
         * Distance: `refTargetDistance` (`Number`) = `30`
     * Particles (drawn on hit/destory events)
