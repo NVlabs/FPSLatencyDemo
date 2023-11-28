@@ -424,8 +424,8 @@ var config = {
     maxSpeed : getURLParamIfPresent('targetMaxSpeed', 12),                  // Maximum target speed (uniform random in range)
     minChangeTime : getURLParamIfPresent('targetMinChangeTime', 0.5),       // Minimum target direction change time (uniform random in range)
     maxChangeTime : getURLParamIfPresent('targetMaxChangeTime' , 1),        // Maximum target direction change tiem (uniform random in range)
-    offColor : getURLParamIfPresent('offTargetColor', '#00ff00'),           // Color when aim is off target (not tracked)
-    onColor : getURLParamIfPresent('onTargetColor', '#ff0000'),             // Color when aim is on target (tracked)
+    offColor : getURLParamIfPresent('offTargetColor', '#d31286'),           // Color when aim is off target (not tracked)
+    onColor : getURLParamIfPresent('onTargetColor', '#91e600'),             // Color when aim is on target (tracked)
     
     minSpawnDistance: getURLParamIfPresent('targetMinSpawnDistance', TARGET_DIST),   // Minimum target spawn distance
     maxSpawnDistance: getURLParamIfPresent('targetMaxSpawnDistance', TARGET_DIST),   // Maximum target spawn distance
