@@ -407,22 +407,22 @@ var config = {
   reticle : { // Reticle configuration
     color : getURLParamIfPresent('reticleColor', '#000000'),                // Reticle color
     size : getURLParamIfPresent('reticleSize', 0.01),                       // Reticle base size
-    gap : getURLParamIfPresent('reticleGap', 0.003),                         // Reticle base gap size
+    gap : getURLParamIfPresent('reticleGap', 0.003),                        // Reticle base gap size
     thickness : getURLParamIfPresent('reticleThickness', 0.15),             // Reticle thickness (ratio of size)
     expandedScale : getURLParamIfPresent('reticleExpandScale', 0),          // Reticle expanded scale
-    shrinkTime : getURLParamIfPresent('reticleShrinkTime', 0.3),           // Reticle shrink time after fire event
+    shrinkTime : getURLParamIfPresent('reticleShrinkTime', 0.3),            // Reticle shrink time after fire event
   },
 
   targets : { // Task target configuration
-    count: getURLParamIfPresent('targetCount', 1),                              // Number of simultaneous targets         
-    minSize : getURLParamIfPresent('targetMinSize', TARGET_SIZE),                       // Minimum target size (uniform random in range)
-    maxSize : getURLParamIfPresent('targetMaxSize', TARGET_SIZE),                         // Maxmium target size (uniform random in range)
-    minSpeed: getURLParamIfPresent('targetMinSpeed', 8),                        // Minimum target speed (uniform random in range)
-    maxSpeed : getURLParamIfPresent('targetMaxSpeed', 12),                      // Maximum target speed (uniform random in range)
-    minChangeTime : getURLParamIfPresent('targetMinChangeTime', 0.5),             // Minimum target direction change time (uniform random in range)
-    maxChangeTime : getURLParamIfPresent('targetMaxChangeTime' , 1),            // Maximum target direction change tiem (uniform random in range)
-    fullHealthColor : getURLParamIfPresent('targetMaxHealthColor', '#00ff00'),  // Color for full health target
-    minHealthColor : getURLParamIfPresent('targetMinHealthColor', '#ff0000'),   // Color for min health 
+    count: getURLParamIfPresent('targetCount', 1),                          // Number of simultaneous targets         
+    minSize : getURLParamIfPresent('targetMinSize', TARGET_SIZE),           // Minimum target size (uniform random in range)
+    maxSize : getURLParamIfPresent('targetMaxSize', TARGET_SIZE),           // Maxmium target size (uniform random in range)
+    minSpeed: getURLParamIfPresent('targetMinSpeed', 8),                    // Minimum target speed (uniform random in range)
+    maxSpeed : getURLParamIfPresent('targetMaxSpeed', 12),                  // Maximum target speed (uniform random in range)
+    minChangeTime : getURLParamIfPresent('targetMinChangeTime', 0.5),      // Minimum target direction change time (uniform random in range)
+    maxChangeTime : getURLParamIfPresent('targetMaxChangeTime' , 1),     // Maximum target direction change tiem (uniform random in range)
+    offColor : getURLParamIfPresent('offTargetColor', '#00ff00'),           // Color when aim is off target (not tracked)
+    onColor : getURLParamIfPresent('onTargetColor', '#ff0000'),             // Color when aim is on target (tracked)
     
     minSpawnDistance: getURLParamIfPresent('targetMinSpawnDistance', TARGET_DIST),   // Minimum target spawn distance
     maxSpawnDistance: getURLParamIfPresent('targetMaxSpawnDistance', TARGET_DIST),   // Maximum target spawn distance
@@ -451,7 +451,8 @@ var config = {
     },
 
     particles : { // Particle effect configuration
-      size: getURLParamIfPresent('particleSize', 0.2),                      // Particle size for hitting/destroying the target
+      enabled: getURLParamIfPresent('targetHitParticles', false),            // Show hit particles?
+      size: getURLParamIfPresent('particleSize', 0.2),                     // Particle size for hitting/destroying the target
       hitCount: getURLParamIfPresent('hitParticleCount', 1),               // Particle count for hitting the target
       destroyCount: getURLParamIfPresent('destroyParticleCount', 500),     // Particle count for destroying the target
       duration: getURLParamIfPresent('hitParticleDuration', 1),            // Duration to draw hit particles
@@ -1036,7 +1037,7 @@ function spawnTarget(reference = false){
     if(position.y - size < 0) position.y = 1.1 * size;                       // Keep target spawn position above the floor
     const speed = randInRange(config.targets.minSpeed, config.targets.maxSpeed);
     const changeTime = randInRange(config.targets.minChangeTime, config.targets.maxChangeTime);
-    makeTarget(position, size, speed, config.targets.fullHealthColor, changeTime);
+    makeTarget(position, size, speed, config.targets.offColor, changeTime);
   }
   referenceTarget = reference;
 }
@@ -1078,15 +1079,17 @@ function makeTarget(spawnPosition, targetRadius = 1, speed = 0, targetColor = ne
  * @param {The world-space coordinate at which the target was hit} hitPoint 
  */
 function damageTarget(target, hitPoint){
-  target.health -= config.weapon.damagePerSecond * config.weapon.firePeriod;
+  // No need to do damage in this experiment
+  // target.health -= config.weapon.damagePerSecond * config.weapon.firePeriod;
   if(target.health <= 0 || referenceTarget) {
     destroyTarget(target);
     clickShot = true;
     return true;
   }
   else {
-    makeParticles(hitPoint, target.material.color, config.targets.particles.size, config.targets.particles.hitCount, config.targets.particles.duration);
-    target.material.color = new THREE.Color(config.targets.fullHealthColor).lerp(new THREE.Color(config.targets.minHealthColor), 1-target.health);
+    if(config.targets.particles.enabled) makeParticles(hitPoint, target.material.color, config.targets.particles.size, config.targets.particles.hitCount, config.targets.particles.duration);
+    // Hit target, change color to "on"
+    target.material.color = new THREE.Color(config.targets.onColor);
     return false;
   }
 }
@@ -1494,8 +1497,8 @@ function makeGUI() {
     }
   });
   var targetColorControls = targetControls.addFolder('Color');
-  targetColorControls.addColor(config.targets, 'fullHealthColor').name('Full Health').listen();
-  targetColorControls.addColor(config.targets, 'minHealthColor').name('Min Health').listen();
+  targetColorControls.addColor(config.targets, 'offColor').name('Off').listen();
+  targetColorControls.addColor(config.targets, 'onColor').name('On').listen();
   var targetSpawnControls = targetControls.addFolder('Spawn Location');
   targetSpawnControls.add(config.targets, 'spawnAzimMinDeg', 0, 90).name('Min Spawn Azim').listen().onChange(function(value) {
     if(value > config.targets.spawnAzimMaxDeg) config.targets.spawnAzimMaxDeg = value;
@@ -2091,8 +2094,13 @@ function animate() {
               }
             }
           }
-          else{                                               // Missed the target
-            if(config.weapon.missParticles) makeParticles(intersect.point, new THREE.Color(0,0,0), config.weapon.missParticleSize, config.weapon.missParticleCount, config.weapon.missParticleDuration);
+          else{ // Missed the target
+            if(config.weapon.missParticles) {
+              makeParticles(intersect.point, new THREE.Color(0,0,0), config.weapon.missParticleSize, config.weapon.missParticleCount, config.weapon.missParticleDuration);
+            }
+            if(!referenceTarget) {
+              targets[0].material.color = new THREE.Color(config.targets.offColor);
+            }
           }
           updateBanner();
         }
