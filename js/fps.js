@@ -217,15 +217,20 @@ var showResults = function(){
     document.getElementById('copyRowBtn').innerText = 'Copy Rows';
     document.getElementById('dlRowBtn').innerText = 'CSV Rows';
     
-    resultsTable.innerHTML = `<thead>
-      <tr><th>Frame Delay</th><th>Added Latency [ms]</th><th>Time on Target</th><th>Accuracy</th></tr>
-    </thead>
-    <tbody>`
+    // Build up HTML results table
+    var tableHTML = `<thead>\n\t<tr>`;
+    if (USERNAME != '') tableHTML += '<th>User</th>';
+    tableHTML += '<th>Frame Delay</th><th>Added Latency [ms]</th><th>Time on Target</th><th>Accuracy</th></tr>\n';
+    tableHTML += '</thead>\n<tbody>\n';
     for(var i = 0; i < sortedConds.length; i++) {
       var fd = sortedConds[i];
-      resultsTable.innerHTML += `\t<tr><td>${fd}</td><td>${(measLatencies[fd]).toFixed(1)}</td><td>${totResults[fd]}</td><td>${(100*totResults[fd]/MEAS_DUR_S).toFixed(1)}%</td></tr>\n`
+      tableHTML += '\t<tr>'
+      if (USERNAME != '') tableHTML += `<td>${USERNAME}</td>`;
+      tableHTML += `<td>${fd}</td><td>${(measLatencies[fd]).toFixed(1)}</td><td>${totResults[fd]}</td><td>${(100*totResults[fd]/MEAS_DUR_S).toFixed(1)}%</td></tr>\n`;
     }
-    resultsTable.innerHTML += '</tbody>'
+    tableHTML += '</tbody>';
+    resultsTable.innerHTML = tableHTML; // Add the table
+    // Make visible
     toggleResultsTableVisible();
   }
 
@@ -487,6 +492,7 @@ const MIN_FRAME_RATE = getURLParamIfPresent('warnFrameRate', 30); // Below this 
 const INITIAL_LATENCY_MS = getURLParamIfPresent('defaultLatencyMs', 66); // This is the initial target latency
 const INITIAL_LATENCY_FRAMES = getURLParamIfPresent('defaultLatencyFrames', -1); // This is the target latency in frames (unused if -1)
 const FRAME_DELAYS_STR = getURLParamIfPresent('frameDelays', ''); // This is an optional set of fixed conditions
+const USERNAME = getURLParamIfPresent('username', '');  // This is an optional username that (if provided) is written into the results table (only)
 
 // Parse constant frame delays (if provided)
 var fixedFrameDelays = [];
