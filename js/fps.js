@@ -111,20 +111,20 @@ var nextState = function(){
     // Build up our latency conditions based on the JND latency here
     if (!useFixedFrameDelays){
       var jnd_lat = config.render.frameDelay;
-      if(jnd_lat == 0 || jnd_lat == 1) measLatencies = [0,1,2]; // Case where user specifies 0 JND
+      if(jnd_lat == 0 || jnd_lat == 1) frameDelays = [0,1,2]; // Case where user specifies 0 JND
       else if(jnd_lat > 1) {
-        measLatencies.push(Math.round(jnd_lat / 2));
-        measLatencies.push(jnd_lat);
+        frameDelays.push(Math.round(jnd_lat / 2));
+        frameDelays.push(jnd_lat);
       }
-      measLatencies = measLatencies.sort(function(a,b) {return b-a;})
+      frameDelays = frameDelays.sort(function(a,b) {return b-a;})
       console.log('Selected JND of ' +  jnd_lat)
     }
-    else measLatencies = fixedFrameDelays; // Use fixed frame delays
+    else frameDelays = fixedFrameDelays; // Use fixed frame delays
 
     // Optionally randomize the condition order
-    if(RANDOM_ORDER) measLatencies.sort(() => Math.random() - 0.5);
-    console.log('Testing conditions: ' + measLatencies);
-    measHeader.innerText = `Measurement Phase ${measLatIndex+1}/${measLatencies.length}`
+    if(RANDOM_ORDER) frameDelays.sort(() => Math.random() - 0.5);
+    console.log('Testing conditions: ' + frameDelays);
+    measHeader.innerText = `Measurement Phase ${frameDelayIndex+1}/${frameDelays.length}`
     sensitivityDiv.style.visibility = 'hidden';
     latencyDiv.style.visibility = 'hidden';
     timerDiv.style.visibility = 'visible';
@@ -134,20 +134,24 @@ var nextState = function(){
   updateInstructions();
 }
 
-var measLatencies = [0];
-var measLatIndex = 0;
+var frameDelays = [0];
+var frameDelayIndex = 0;
+
 var condComplete = false;
-var totResults = {};
+var totResults = {};        // Storage for time on target results
+var measLatencies = {};     // Storage for latency measured in each condition
+
 const measHeader = document.getElementById("measHeader");
 
 var nextMeasCondition = function(){
   inMeas = false; // Reset this flag
-  totResults[measLatencies[measLatIndex]] = timeOnTarget; // Save result
+  totResults[frameDelays[frameDelayIndex]] = timeOnTarget; // Save result
+  measLatencies[frameDelays[frameDelayIndex]] = frameDelays[frameDelayIndex] * frameTimes.avg();
   timeOnTarget = 0; // Reset tracking variable
-  measLatIndex += 1;  // Increment to next measurement
-  if(measLatIndex < measLatencies.length) {
-    set_latency(measLatencies[measLatIndex]) // Set the new latency
-    measHeader.innerText = `Measurement Phase ${measLatIndex+1}/${measLatencies.length}`
+  frameDelayIndex += 1;  // Increment to next measurement
+  if(frameDelayIndex < frameDelays.length) {
+    set_latency(frameDelays[frameDelayIndex]) // Set the new latency
+    measHeader.innerText = `Measurement Phase ${frameDelayIndex+1}/${frameDelays.length}`
     timeRemainingS = MEAS_DUR_S;
     timeIndicator.innerText = timeRemainingS.toFixed(2) + "s";
     makeScene();
@@ -174,16 +178,15 @@ const resultsTable = document.getElementById("results_table");
 var resultsDisplayed = false;
 
 var showResults = function(){
-  const sortedConds = measLatencies.sort(function(a,b) {return a-b});    // This should sort low latency, mid latency, high latency
-  const avgFrameTime = frameTimes.avg();
+  const sortedConds = frameDelays.sort(function(a,b) {return a-b});    // This should sort low latency, mid latency, high latency
   if(!useFixedFrameDelays) { 
     // No provided frame delays, this is a JND-style result, show colorized results
     const lowLat = sortedConds[0]; const midLat = sortedConds[1]; const highLat = sortedConds[2];
     const lowLatTot = totResults[lowLat]; const midLatTot = totResults[midLat]; const highLatTot = totResults[highLat];
     const lowLatAcc = 100 * lowLatTot / MEAS_DUR_S; const midLatAcc = 100 * midLatTot / MEAS_DUR_S; const highLatAcc = 100 * highLatTot / MEAS_DUR_S;
 
-    const midLatDiff = midLat * avgFrameTime;
-    const highLatDiff = highLat * avgFrameTime;
+    const midLatDiff = measLatencies[midLat];
+    const highLatDiff = measLatencies[highLat];
     lowlatresult.innerHTML = `<h1>Minimum Latency</h1><p>0 Frames Delayed</p><br><h2>Time on Target: ${lowLatTot.toFixed(3)} s</h2><p>Accuracy: ${lowLatAcc.toFixed(1)}%</p>`;
     midlatresult.innerHTML = `<h1>+ ${midLatDiff.toFixed(1)} ms Latency</h1><p>${midLat} Frames Delayed</p><br><h2>Time on Target: ${midLatTot.toFixed(3)} s</h2><p>Accuracy: ${midLatAcc.toFixed(1)}%</p>`;
     highlatresult.innerHTML = `<h1>+ ${highLatDiff.toFixed(1)} ms Latency</h1><p>${highLat} Frames Delayed</p><br><h2>Time on Target: ${highLatTot.toFixed(3)} s</h2><p>Accuracy: ${highLatAcc.toFixed(1)}%</p>`;
@@ -219,7 +222,7 @@ var showResults = function(){
     <tbody>`
     for(var i = 0; i < sortedConds.length; i++) {
       var fd = sortedConds[i];
-      resultsTable.innerHTML += `\t<tr><td>${fd}</td><td>${(fd*avgFrameTime).toFixed(1)}</td><td>${totResults[fd]}</td><td>${(100*totResults[fd]/MEAS_DUR_S).toFixed(1)}%</td></tr>\n`
+      resultsTable.innerHTML += `\t<tr><td>${fd}</td><td>${(measLatencies[fd]).toFixed(1)}</td><td>${totResults[fd]}</td><td>${(100*totResults[fd]/MEAS_DUR_S).toFixed(1)}%</td></tr>\n`
     }
     resultsTable.innerHTML += '</tbody>'
     toggleResultsTableVisible();
