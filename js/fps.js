@@ -419,8 +419,8 @@ var config = {
     maxSize : getURLParamIfPresent('targetMaxSize', TARGET_SIZE),           // Maxmium target size (uniform random in range)
     minSpeed: getURLParamIfPresent('targetMinSpeed', 8),                    // Minimum target speed (uniform random in range)
     maxSpeed : getURLParamIfPresent('targetMaxSpeed', 12),                  // Maximum target speed (uniform random in range)
-    minChangeTime : getURLParamIfPresent('targetMinChangeTime', 0.5),      // Minimum target direction change time (uniform random in range)
-    maxChangeTime : getURLParamIfPresent('targetMaxChangeTime' , 1),     // Maximum target direction change tiem (uniform random in range)
+    minChangeTime : getURLParamIfPresent('targetMinChangeTime', 0.5),       // Minimum target direction change time (uniform random in range)
+    maxChangeTime : getURLParamIfPresent('targetMaxChangeTime' , 1),        // Maximum target direction change tiem (uniform random in range)
     offColor : getURLParamIfPresent('offTargetColor', '#00ff00'),           // Color when aim is off target (not tracked)
     onColor : getURLParamIfPresent('onTargetColor', '#ff0000'),             // Color when aim is on target (tracked)
     
@@ -446,6 +446,7 @@ var config = {
     maxJumpCrouchTime : getURLParamIfPresent('targetMaxJumpCrouchTime', 2),
 
     reference : { // Reference target configuration
+      color: getURLParamIfPresent('refTargetColor', '#ffff00'),      // Color for the reference target
       size: getURLParamIfPresent('refTargetSize', 1),             // Reference target size
       distance: getURLParamIfPresent('refTargetDistance', 30),    // Reference target distance
     },
@@ -1021,7 +1022,7 @@ function spawnTarget(reference = false){
     const position = new THREE.Vector3();
     position.copy(fpsControls.position());
     position.add(new THREE.Vector3().setFromSphericalCoords(config.targets.reference.distance, -Math.PI/2, fpsControls.getViewAzim()));
-    makeTarget(position, config.targets.reference.size, 0, new THREE.Color(1,1,0));
+    makeTarget(position, config.targets.reference.size, 0, new THREE.Color(config.targets.reference.color));
   }
   else{
     var cameraDir = camera.getWorldDirection(new THREE.Vector3());

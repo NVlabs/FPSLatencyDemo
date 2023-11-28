@@ -130,6 +130,7 @@ Typically JSON parameter names are _very_ similar to URL parameter names, but of
         * Min time between jumps/crouches: `targetMinJumpCrouchTime` (`Number`) = `1`
         * Max time between jumps/crouches: `targetMaxJumpCrouchTime` (`Number`) = `2`
     * Reference target (red target used to reset aim direction on reload/start of trial)
+        * Color: `refTargetColor` (`Color`) = `#ffff00`
         * Size: `refTargetSize` (`Number`) = `1`
         * Distance: `refTargetDistance` (`Number`) = `30`
     * Particles (drawn on hit/destory events)
