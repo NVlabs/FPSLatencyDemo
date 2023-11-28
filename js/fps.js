@@ -28,9 +28,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 const TARGET_SIZE = 0.6;
 const TARGET_DIST = 30;
 const TARGET_HEIGHT = 6;
+
+const TARGET_JUMP = false;
+const TARGET_CROUCH = false;
 const TARGET_CROUCH_HEIGHT = 4;
-const TARGET_JUMP = true;
-const TARGET_CROUCH = true;
 
 // States that the experiment progresses through
 const states = ["sensitivity", "latency", "measurement"]
@@ -419,8 +420,8 @@ var config = {
     maxSize : getURLParamIfPresent('targetMaxSize', TARGET_SIZE),                         // Maxmium target size (uniform random in range)
     minSpeed: getURLParamIfPresent('targetMinSpeed', 8),                        // Minimum target speed (uniform random in range)
     maxSpeed : getURLParamIfPresent('targetMaxSpeed', 12),                      // Maximum target speed (uniform random in range)
-    minChangeTime : getURLParamIfPresent('targetMinChangeTime', 0.5),             // Minimum target direction change time (uniform random in range)
-    maxChangeTime : getURLParamIfPresent('targetMaxChangeTime' , 1),            // Maximum target direction change tiem (uniform random in range)
+    minChangeTime : getURLParamIfPresent('targetMinChangeTime', 0.25),             // Minimum target direction change time (uniform random in range)
+    maxChangeTime : getURLParamIfPresent('targetMaxChangeTime' , 0.5),            // Maximum target direction change tiem (uniform random in range)
     fullHealthColor : getURLParamIfPresent('targetMaxHealthColor', '#00ff00'),  // Color for full health target
     minHealthColor : getURLParamIfPresent('targetMinHealthColor', '#ff0000'),   // Color for min health 
     
