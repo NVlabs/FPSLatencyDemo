@@ -449,7 +449,7 @@ var config = {
     maxJumpCrouchTime : getURLParamIfPresent('targetMaxJumpCrouchTime', 2),
 
     reference : { // Reference target configuration
-      color: getURLParamIfPresent('refTargetColor', '#ffff00'),      // Color for the reference target
+      color: getURLParamIfPresent('refTargetColor', '#fac200'),      // Color for the reference target
       size: getURLParamIfPresent('refTargetSize', 1),             // Reference target size
       distance: getURLParamIfPresent('refTargetDistance', 30),    // Reference target distance
     },
