@@ -179,7 +179,6 @@ var resultsDisplayed = false;
 
 var showResults = function(){
   const sortedConds = frameDelays.sort(function(a,b) {return a-b});    // This should sort low latency, mid latency, high latency
-  const avgFrameTime = frameTimes.avg();
   if(!useFixedFrameDelays) { 
     // No provided frame delays, this is a JND-style result, show colorized results
     const lowLat = sortedConds[0]; const midLat = sortedConds[1]; const highLat = sortedConds[2];
