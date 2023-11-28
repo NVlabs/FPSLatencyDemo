@@ -105,13 +105,13 @@ Typically JSON parameter names are _very_ similar to URL parameter names, but of
     * Min size (uniform random in range): `targetMinSize` (`Number`) = `0.6`
     * Max size (uniform random in range): `targetMaxSize` (`Number`) = `0.6`
     * Movement parameters (uniformly randomized in range)
-        * Min speed (along a line): `targetMinSpeed` (`Number`) = `5`
-        * Max speed (along a line): `targetMaxSpeed` (`Number`) = `15`
-        * Min motion change time (new direction selection interval): `targetMinChangeTime` (`Number`) = `1`
-        * Max motion change time (new direction selection interval): `targetMaxChangeTime` (`Number`) = `3`
+        * Min speed (along a line): `targetMinSpeed` (`Number`) = `8`
+        * Max speed (along a line): `targetMaxSpeed` (`Number`) = `12`
+        * Min motion change time (new direction selection interval): `targetMinChangeTime` (`Number`) = `0.25`
+        * Max motion change time (new direction selection interval): `targetMaxChangeTime` (`Number`) = `0.5`
     * Color (full/min health are interpolated between)
-        * Full/max health color: `targetMaxHealthColor` (`Color`) = `#00ff00`
-        * Min/no health color: `targetMinHealthColor` (`Color`) = `#ff0000`
+        * Aim off target color: `offTargetColor` (`Color`) = `#d31286`
+        * Aim on target color: `onTargetColor` (`Color`) = `#91e600`
     * Spawn position (uniformly randomized in range)
         * Min spawn distance: `targetMinSpawnDistance` (`Number`) = `30`
         * Max spawn distance: `targetMaxSpawnDistance` (`Number`) = `30`
@@ -122,17 +122,20 @@ Typically JSON parameter names are _very_ similar to URL parameter names, but of
             * Min elevation spawn angle: `targetSpawnMinElev` (`Number` degrees) = `3` -->
     * Target height above ground: `targetHeight` (`Number`) = 6
     * Target jumps
-        * Can target jump?: `targetJump` (`Boolean`) = `True`
-        * Can target crouch?: `targetCrouch` (`Boolean`) = `True`
+        * Can target jump?: `targetJump` (`Boolean`) = `False`
+        * Can target crouch?: `targetCrouch` (`Boolean`) = `False`
         * Crouch height: `targetCrouchHeight` (`Number`) = `4`
         * Jump speed: `targetJumpSpeed` (`Number`) = `20`
         * Jump gravity: `targetJumpGravity` (`Number`) = `65`
         * Min time between jumps/crouches: `targetMinJumpCrouchTime` (`Number`) = `1`
         * Max time between jumps/crouches: `targetMaxJumpCrouchTime` (`Number`) = `2`
     * Reference target (red target used to reset aim direction on reload/start of trial)
+        * Color: `refTargetColor` (`Color`) = `#ffc800`
         * Size: `refTargetSize` (`Number`) = `1`
         * Distance: `refTargetDistance` (`Number`) = `30`
     * Particles (drawn on hit/destory events)
+        * Hit Particles Enabled: `targetHitParticles` (`Boolean`): `False`
+        * Destroy Particles Enabled: `targetDestroyParticles` (`Boolean`): `False`
         * Size: `particleSize` (`Number`): `0.4`
         * Count to spawn on hit: `hitParticleCount` (`Integer`) = `25`
         * Count to spawn on destroy: `destroyParticleCount` (`Integer`) = `1000`

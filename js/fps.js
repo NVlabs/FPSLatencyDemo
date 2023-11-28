@@ -28,9 +28,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 const TARGET_SIZE = 0.6;
 const TARGET_DIST = 30;
 const TARGET_HEIGHT = 6;
+
+const TARGET_JUMP = false;
+const TARGET_CROUCH = false;
 const TARGET_CROUCH_HEIGHT = 4;
-const TARGET_JUMP = true;
-const TARGET_CROUCH = true;
 
 // States that the experiment progresses through
 const states = ["sensitivity", "latency", "measurement"]
@@ -111,20 +112,20 @@ var nextState = function(){
     // Build up our latency conditions based on the JND latency here
     if (!useFixedFrameDelays){
       var jnd_lat = config.render.frameDelay;
-      if(jnd_lat == 0 || jnd_lat == 1) measLatencies = [0,1,2]; // Case where user specifies 0 JND
+      if(jnd_lat == 0 || jnd_lat == 1) frameDelays = [0,1,2]; // Case where user specifies 0 JND
       else if(jnd_lat > 1) {
-        measLatencies.push(Math.round(jnd_lat / 2));
-        measLatencies.push(jnd_lat);
+        frameDelays.push(Math.round(jnd_lat / 2));
+        frameDelays.push(jnd_lat);
       }
-      measLatencies = measLatencies.sort(function(a,b) {return b-a;})
+      frameDelays = frameDelays.sort(function(a,b) {return b-a;})
       console.log('Selected JND of ' +  jnd_lat)
     }
-    else measLatencies = fixedFrameDelays; // Use fixed frame delays
+    else frameDelays = fixedFrameDelays; // Use fixed frame delays
 
     // Optionally randomize the condition order
-    if(RANDOM_ORDER) measLatencies.sort(() => Math.random() - 0.5);
-    console.log('Testing conditions: ' + measLatencies);
-    measHeader.innerText = `Measurement Phase ${measLatIndex+1}/${measLatencies.length}`
+    if(RANDOM_ORDER) frameDelays.sort(() => Math.random() - 0.5);
+    console.log('Testing conditions: ' + frameDelays);
+    measHeader.innerText = `Measurement Phase ${frameDelayIndex+1}/${frameDelays.length}`
     sensitivityDiv.style.visibility = 'hidden';
     latencyDiv.style.visibility = 'hidden';
     timerDiv.style.visibility = 'visible';
@@ -134,20 +135,24 @@ var nextState = function(){
   updateInstructions();
 }
 
-var measLatencies = [0];
-var measLatIndex = 0;
+var frameDelays = [0];
+var frameDelayIndex = 0;
+
 var condComplete = false;
-var totResults = {};
+var totResults = {};        // Storage for time on target results
+var measLatencies = {};     // Storage for latency measured in each condition
+
 const measHeader = document.getElementById("measHeader");
 
 var nextMeasCondition = function(){
   inMeas = false; // Reset this flag
-  totResults[measLatencies[measLatIndex]] = timeOnTarget; // Save result
+  totResults[frameDelays[frameDelayIndex]] = timeOnTarget; // Save result
+  measLatencies[frameDelays[frameDelayIndex]] = frameDelays[frameDelayIndex] * frameTimes.avg();
   timeOnTarget = 0; // Reset tracking variable
-  measLatIndex += 1;  // Increment to next measurement
-  if(measLatIndex < measLatencies.length) {
-    set_latency(measLatencies[measLatIndex]) // Set the new latency
-    measHeader.innerText = `Measurement Phase ${measLatIndex+1}/${measLatencies.length}`
+  frameDelayIndex += 1;  // Increment to next measurement
+  if(frameDelayIndex < frameDelays.length) {
+    set_latency(frameDelays[frameDelayIndex]) // Set the new latency
+    measHeader.innerText = `Measurement Phase ${frameDelayIndex+1}/${frameDelays.length}`
     timeRemainingS = MEAS_DUR_S;
     timeIndicator.innerText = timeRemainingS.toFixed(2) + "s";
     makeScene();
@@ -174,16 +179,15 @@ const resultsTable = document.getElementById("results_table");
 var resultsDisplayed = false;
 
 var showResults = function(){
-  const sortedConds = measLatencies.sort(function(a,b) {return a-b});    // This should sort low latency, mid latency, high latency
-  const avgFrameTime = frameTimes.avg();
+  const sortedConds = frameDelays.sort(function(a,b) {return a-b});    // This should sort low latency, mid latency, high latency
   if(!useFixedFrameDelays) { 
     // No provided frame delays, this is a JND-style result, show colorized results
     const lowLat = sortedConds[0]; const midLat = sortedConds[1]; const highLat = sortedConds[2];
     const lowLatTot = totResults[lowLat]; const midLatTot = totResults[midLat]; const highLatTot = totResults[highLat];
     const lowLatAcc = 100 * lowLatTot / MEAS_DUR_S; const midLatAcc = 100 * midLatTot / MEAS_DUR_S; const highLatAcc = 100 * highLatTot / MEAS_DUR_S;
 
-    const midLatDiff = midLat * avgFrameTime;
-    const highLatDiff = highLat * avgFrameTime;
+    const midLatDiff = measLatencies[midLat];
+    const highLatDiff = measLatencies[highLat];
     lowlatresult.innerHTML = `<h1>Minimum Latency</h1><p>0 Frames Delayed</p><br><h2>Time on Target: ${lowLatTot.toFixed(3)} s</h2><p>Accuracy: ${lowLatAcc.toFixed(1)}%</p>`;
     midlatresult.innerHTML = `<h1>+ ${midLatDiff.toFixed(1)} ms Latency</h1><p>${midLat} Frames Delayed</p><br><h2>Time on Target: ${midLatTot.toFixed(3)} s</h2><p>Accuracy: ${midLatAcc.toFixed(1)}%</p>`;
     highlatresult.innerHTML = `<h1>+ ${highLatDiff.toFixed(1)} ms Latency</h1><p>${highLat} Frames Delayed</p><br><h2>Time on Target: ${highLatTot.toFixed(3)} s</h2><p>Accuracy: ${highLatAcc.toFixed(1)}%</p>`;
@@ -213,15 +217,20 @@ var showResults = function(){
     document.getElementById('copyRowBtn').innerText = 'Copy Rows';
     document.getElementById('dlRowBtn').innerText = 'CSV Rows';
     
-    resultsTable.innerHTML = `<thead>
-      <tr><th>Frame Delay</th><th>Added Latency [ms]</th><th>Time on Target</th><th>Accuracy</th></tr>
-    </thead>
-    <tbody>`
+    // Build up HTML results table
+    var tableHTML = `<thead>\n\t<tr>`;
+    if (USERNAME != '') tableHTML += '<th>User</th>';
+    tableHTML += '<th>Frame Delay</th><th>Added Latency [ms]</th><th>Time on Target</th><th>Accuracy</th></tr>\n';
+    tableHTML += '</thead>\n<tbody>\n';
     for(var i = 0; i < sortedConds.length; i++) {
       var fd = sortedConds[i];
-      resultsTable.innerHTML += `\t<tr><td>${fd}</td><td>${(fd*avgFrameTime).toFixed(1)}</td><td>${totResults[fd]}</td><td>${(100*totResults[fd]/MEAS_DUR_S).toFixed(1)}%</td></tr>\n`
+      tableHTML += '\t<tr>'
+      if (USERNAME != '') tableHTML += `<td>${USERNAME}</td>`;
+      tableHTML += `<td>${fd}</td><td>${(measLatencies[fd]).toFixed(1)}</td><td>${totResults[fd].toFixed(3)}</td><td>${(100*totResults[fd]/MEAS_DUR_S).toFixed(2)}%</td></tr>\n`;
     }
-    resultsTable.innerHTML += '</tbody>'
+    tableHTML += '</tbody>';
+    resultsTable.innerHTML = tableHTML; // Add the table
+    // Make visible
     toggleResultsTableVisible();
   }
 
@@ -407,22 +416,22 @@ var config = {
   reticle : { // Reticle configuration
     color : getURLParamIfPresent('reticleColor', '#000000'),                // Reticle color
     size : getURLParamIfPresent('reticleSize', 0.01),                       // Reticle base size
-    gap : getURLParamIfPresent('reticleGap', 0.003),                         // Reticle base gap size
+    gap : getURLParamIfPresent('reticleGap', 0.003),                        // Reticle base gap size
     thickness : getURLParamIfPresent('reticleThickness', 0.15),             // Reticle thickness (ratio of size)
     expandedScale : getURLParamIfPresent('reticleExpandScale', 0),          // Reticle expanded scale
-    shrinkTime : getURLParamIfPresent('reticleShrinkTime', 0.3),           // Reticle shrink time after fire event
+    shrinkTime : getURLParamIfPresent('reticleShrinkTime', 0.3),            // Reticle shrink time after fire event
   },
 
   targets : { // Task target configuration
-    count: getURLParamIfPresent('targetCount', 1),                              // Number of simultaneous targets         
-    minSize : getURLParamIfPresent('targetMinSize', TARGET_SIZE),                       // Minimum target size (uniform random in range)
-    maxSize : getURLParamIfPresent('targetMaxSize', TARGET_SIZE),                         // Maxmium target size (uniform random in range)
-    minSpeed: getURLParamIfPresent('targetMinSpeed', 8),                        // Minimum target speed (uniform random in range)
-    maxSpeed : getURLParamIfPresent('targetMaxSpeed', 12),                      // Maximum target speed (uniform random in range)
-    minChangeTime : getURLParamIfPresent('targetMinChangeTime', 0.5),             // Minimum target direction change time (uniform random in range)
-    maxChangeTime : getURLParamIfPresent('targetMaxChangeTime' , 1),            // Maximum target direction change tiem (uniform random in range)
-    fullHealthColor : getURLParamIfPresent('targetMaxHealthColor', '#00ff00'),  // Color for full health target
-    minHealthColor : getURLParamIfPresent('targetMinHealthColor', '#ff0000'),   // Color for min health 
+    count: getURLParamIfPresent('targetCount', 1),                          // Number of simultaneous targets         
+    minSize : getURLParamIfPresent('targetMinSize', TARGET_SIZE),           // Minimum target size (uniform random in range)
+    maxSize : getURLParamIfPresent('targetMaxSize', TARGET_SIZE),           // Maxmium target size (uniform random in range)
+    minSpeed: getURLParamIfPresent('targetMinSpeed', 8),                    // Minimum target speed (uniform random in range)
+    maxSpeed : getURLParamIfPresent('targetMaxSpeed', 12),                  // Maximum target speed (uniform random in range)
+    minChangeTime : getURLParamIfPresent('targetMinChangeTime', 0.25),      // Minimum target direction change time (uniform random in range)
+    maxChangeTime : getURLParamIfPresent('targetMaxChangeTime' , 0.5),      // Maximum target direction change tiem (uniform random in range)
+    offColor : getURLParamIfPresent('offTargetColor', '#d31286'),           // Color when aim is off target (not tracked)
+    onColor : getURLParamIfPresent('onTargetColor', '#91e600'),             // Color when aim is on target (tracked)
     
     minSpawnDistance: getURLParamIfPresent('targetMinSpawnDistance', TARGET_DIST),   // Minimum target spawn distance
     maxSpawnDistance: getURLParamIfPresent('targetMaxSpawnDistance', TARGET_DIST),   // Maximum target spawn distance
@@ -446,12 +455,15 @@ var config = {
     maxJumpCrouchTime : getURLParamIfPresent('targetMaxJumpCrouchTime', 2),
 
     reference : { // Reference target configuration
+      color: getURLParamIfPresent('refTargetColor', '#ffc800'),      // Color for the reference target
       size: getURLParamIfPresent('refTargetSize', 1),             // Reference target size
       distance: getURLParamIfPresent('refTargetDistance', 30),    // Reference target distance
     },
 
     particles : { // Particle effect configuration
-      size: getURLParamIfPresent('particleSize', 0.2),                      // Particle size for hitting/destroying the target
+      hitParticles: getURLParamIfPresent('targetHitParticles', false),            // Show hit particles?
+      destroyParticles: getURLParamIfPresent('targetDestroyParticles', false),    // Show destroy particles?
+      size: getURLParamIfPresent('particleSize', 0.2),                     // Particle size for hitting/destroying the target
       hitCount: getURLParamIfPresent('hitParticleCount', 1),               // Particle count for hitting the target
       destroyCount: getURLParamIfPresent('destroyParticleCount', 500),     // Particle count for destroying the target
       duration: getURLParamIfPresent('hitParticleDuration', 1),            // Duration to draw hit particles
@@ -480,6 +492,7 @@ const MIN_FRAME_RATE = getURLParamIfPresent('warnFrameRate', 30); // Below this 
 const INITIAL_LATENCY_MS = getURLParamIfPresent('defaultLatencyMs', 66); // This is the initial target latency
 const INITIAL_LATENCY_FRAMES = getURLParamIfPresent('defaultLatencyFrames', -1); // This is the target latency in frames (unused if -1)
 const FRAME_DELAYS_STR = getURLParamIfPresent('frameDelays', ''); // This is an optional set of fixed conditions
+const USERNAME = getURLParamIfPresent('username', '');  // This is an optional username that (if provided) is written into the results table (only)
 
 // Parse constant frame delays (if provided)
 var fixedFrameDelays = [];
@@ -1020,7 +1033,7 @@ function spawnTarget(reference = false){
     const position = new THREE.Vector3();
     position.copy(fpsControls.position());
     position.add(new THREE.Vector3().setFromSphericalCoords(config.targets.reference.distance, -Math.PI/2, fpsControls.getViewAzim()));
-    makeTarget(position, config.targets.reference.size, 0, new THREE.Color(1,1,0));
+    makeTarget(position, config.targets.reference.size, 0, new THREE.Color(config.targets.reference.color));
   }
   else{
     var cameraDir = camera.getWorldDirection(new THREE.Vector3());
@@ -1036,7 +1049,7 @@ function spawnTarget(reference = false){
     if(position.y - size < 0) position.y = 1.1 * size;                       // Keep target spawn position above the floor
     const speed = randInRange(config.targets.minSpeed, config.targets.maxSpeed);
     const changeTime = randInRange(config.targets.minChangeTime, config.targets.maxChangeTime);
-    makeTarget(position, size, speed, config.targets.fullHealthColor, changeTime);
+    makeTarget(position, size, speed, config.targets.offColor, changeTime);
   }
   referenceTarget = reference;
 }
@@ -1078,15 +1091,19 @@ function makeTarget(spawnPosition, targetRadius = 1, speed = 0, targetColor = ne
  * @param {The world-space coordinate at which the target was hit} hitPoint 
  */
 function damageTarget(target, hitPoint){
-  target.health -= config.weapon.damagePerSecond * config.weapon.firePeriod;
+  // No need to do damage in this experiment
+  // target.health -= config.weapon.damagePerSecond * config.weapon.firePeriod;
   if(target.health <= 0 || referenceTarget) {
-    destroyTarget(target);
+    destroyTarget(target, config.targets.particles.destroyParticles);
     clickShot = true;
     return true;
   }
   else {
-    makeParticles(hitPoint, target.material.color, config.targets.particles.size, config.targets.particles.hitCount, config.targets.particles.duration);
-    target.material.color = new THREE.Color(config.targets.fullHealthColor).lerp(new THREE.Color(config.targets.minHealthColor), 1-target.health);
+    if(config.targets.particles.hitParticles) {
+      makeParticles(hitPoint, target.material.color, config.targets.particles.size, config.targets.particles.hitCount, config.targets.particles.duration);
+    }
+    // Hit target, change color to "on"
+    target.material.color = new THREE.Color(config.targets.onColor);
     return false;
   }
 }
@@ -1494,8 +1511,8 @@ function makeGUI() {
     }
   });
   var targetColorControls = targetControls.addFolder('Color');
-  targetColorControls.addColor(config.targets, 'fullHealthColor').name('Full Health').listen();
-  targetColorControls.addColor(config.targets, 'minHealthColor').name('Min Health').listen();
+  targetColorControls.addColor(config.targets, 'offColor').name('Off').listen();
+  targetColorControls.addColor(config.targets, 'onColor').name('On').listen();
   var targetSpawnControls = targetControls.addFolder('Spawn Location');
   targetSpawnControls.add(config.targets, 'spawnAzimMinDeg', 0, 90).name('Min Spawn Azim').listen().onChange(function(value) {
     if(value > config.targets.spawnAzimMaxDeg) config.targets.spawnAzimMaxDeg = value;
@@ -2091,8 +2108,13 @@ function animate() {
               }
             }
           }
-          else{                                               // Missed the target
-            if(config.weapon.missParticles) makeParticles(intersect.point, new THREE.Color(0,0,0), config.weapon.missParticleSize, config.weapon.missParticleCount, config.weapon.missParticleDuration);
+          else{ // Missed the target
+            if(config.weapon.missParticles) {
+              makeParticles(intersect.point, new THREE.Color(0,0,0), config.weapon.missParticleSize, config.weapon.missParticleCount, config.weapon.missParticleDuration);
+            }
+            if(!referenceTarget) {
+              targets[0].material.color = new THREE.Color(config.targets.offColor);
+            }
           }
           updateBanner();
         }
