@@ -226,7 +226,7 @@ var showResults = function(){
       var fd = sortedConds[i];
       tableHTML += '\t<tr>'
       if (USERNAME != '') tableHTML += `<td>${USERNAME}</td>`;
-      tableHTML += `<td>${fd}</td><td>${(measLatencies[fd]).toFixed(1)}</td><td>${totResults[fd]}</td><td>${(100*totResults[fd]/MEAS_DUR_S).toFixed(1)}%</td></tr>\n`;
+      tableHTML += `<td>${fd}</td><td>${(measLatencies[fd]).toFixed(1)}</td><td>${totResults[fd].toFixed(3)}</td><td>${(100*totResults[fd]/MEAS_DUR_S).toFixed(2)}%</td></tr>\n`;
     }
     tableHTML += '</tbody>';
     resultsTable.innerHTML = tableHTML; // Add the table
