@@ -134,7 +134,8 @@ Typically JSON parameter names are _very_ similar to URL parameter names, but of
         * Size: `refTargetSize` (`Number`) = `1`
         * Distance: `refTargetDistance` (`Number`) = `30`
     * Particles (drawn on hit/destory events)
-        * Enabled: `targetHitParticles` (`Boolean`): `False`
+        * Hit Particles Enabled: `targetHitParticles` (`Boolean`): `False`
+        * Destroy Particles Enabled: `targetDestroyParticles` (`Boolean`): `False`
         * Size: `particleSize` (`Number`): `0.4`
         * Count to spawn on hit: `hitParticleCount` (`Integer`) = `25`
         * Count to spawn on destroy: `destroyParticleCount` (`Integer`) = `1000`

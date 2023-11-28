@@ -455,7 +455,8 @@ var config = {
     },
 
     particles : { // Particle effect configuration
-      enabled: getURLParamIfPresent('targetHitParticles', false),            // Show hit particles?
+      hitParticles: getURLParamIfPresent('targetHitParticles', false),            // Show hit particles?
+      destroyParticles: getURLParamIfPresent('targetDestroyParticles', false),    // Show destroy particles?
       size: getURLParamIfPresent('particleSize', 0.2),                     // Particle size for hitting/destroying the target
       hitCount: getURLParamIfPresent('hitParticleCount', 1),               // Particle count for hitting the target
       destroyCount: getURLParamIfPresent('destroyParticleCount', 500),     // Particle count for destroying the target
@@ -1086,12 +1087,14 @@ function damageTarget(target, hitPoint){
   // No need to do damage in this experiment
   // target.health -= config.weapon.damagePerSecond * config.weapon.firePeriod;
   if(target.health <= 0 || referenceTarget) {
-    destroyTarget(target);
+    destroyTarget(target, config.targets.particles.destroyParticles);
     clickShot = true;
     return true;
   }
   else {
-    if(config.targets.particles.enabled) makeParticles(hitPoint, target.material.color, config.targets.particles.size, config.targets.particles.hitCount, config.targets.particles.duration);
+    if(config.targets.particles.hitParticles) {
+      makeParticles(hitPoint, target.material.color, config.targets.particles.size, config.targets.particles.hitCount, config.targets.particles.duration);
+    }
     // Hit target, change color to "on"
     target.material.color = new THREE.Color(config.targets.onColor);
     return false;
