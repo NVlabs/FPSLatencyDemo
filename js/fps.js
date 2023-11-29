@@ -26,7 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Experiment parameters
 const TARGET_SIZE = 0.6;
-const TARGET_DIST = 50;
+const TARGET_DIST = 30;
 const TARGET_HEIGHT = 6;
 
 const TARGET_JUMP = false;
@@ -426,8 +426,8 @@ var config = {
     count: getURLParamIfPresent('targetCount', 1),                          // Number of simultaneous targets         
     minSize : getURLParamIfPresent('targetMinSize', TARGET_SIZE),           // Minimum target size (uniform random in range)
     maxSize : getURLParamIfPresent('targetMaxSize', TARGET_SIZE),           // Maxmium target size (uniform random in range)
-    minSpeed: getURLParamIfPresent('targetMinSpeed', 8),                    // Minimum target speed (uniform random in range)
-    maxSpeed : getURLParamIfPresent('targetMaxSpeed', 12),                  // Maximum target speed (uniform random in range)
+    minSpeed: getURLParamIfPresent('targetMinSpeed', 6),                    // Minimum target speed (uniform random in range)
+    maxSpeed : getURLParamIfPresent('targetMaxSpeed', 8),                  // Maximum target speed (uniform random in range)
     minChangeTime : getURLParamIfPresent('targetMinChangeTime', 0.25),      // Minimum target direction change time (uniform random in range)
     maxChangeTime : getURLParamIfPresent('targetMaxChangeTime' , 0.5),      // Maximum target direction change tiem (uniform random in range)
     offColor : getURLParamIfPresent('offTargetColor', '#d31286'),           // Color when aim is off target (not tracked)
