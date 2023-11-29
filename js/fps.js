@@ -435,8 +435,8 @@ var config = {
     
     minSpawnDistance: getURLParamIfPresent('targetMinSpawnDistance', TARGET_DIST),   // Minimum target spawn distance
     maxSpawnDistance: getURLParamIfPresent('targetMaxSpawnDistance', TARGET_DIST),   // Maximum target spawn distance
-    spawnAzimMinDeg : getURLParamIfPresent('targetSpawnMinAzim', 20),       // The minimum target spawn azimuth angle (symmetric, relative to current view direction)
-    spawnAzimMaxDeg : getURLParamIfPresent('targetSpawnMaxAzim', 35),       // The maximum target spawn azimuth angle (symmetric, relative to current view direction)
+    spawnAzimMinDeg : getURLParamIfPresent('targetSpawnMinAzim', 0),       // The minimum target spawn azimuth angle (symmetric, relative to current view direction)
+    spawnAzimMaxDeg : getURLParamIfPresent('targetSpawnMaxAzim', 0),       // The maximum target spawn azimuth angle (symmetric, relative to current view direction)
     // spawnElevMinDeg : getURLParamIfPresent('targetSpawnMinElev', 3),        // The minimum target spawn elevation angle (symmetric, relative to current view direction)
     // spawnElevMaxDeg : getURLParamIfPresent('targetSpawnMaxElev', 10),       // The minimum target spawn elevation angle (symmetric, relative to current view direction)
 
