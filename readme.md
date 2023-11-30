@@ -105,10 +105,11 @@ Typically JSON parameter names are _very_ similar to URL parameter names, but of
     * Min size (uniform random in range): `targetMinSize` (`Number`) = `0.6`
     * Max size (uniform random in range): `targetMaxSize` (`Number`) = `0.6`
     * Movement parameters (uniformly randomized in range)
-        * Min speed (along a line): `targetMinSpeed` (`Number`) = `8`
-        * Max speed (along a line): `targetMaxSpeed` (`Number`) = `12`
+        * Min speed (along a line): `targetMinSpeed` (`Number`) = `6`
+        * Max speed (along a line): `targetMaxSpeed` (`Number`) = `8`
         * Min motion change time (new direction selection interval): `targetMinChangeTime` (`Number`) = `0.25`
         * Max motion change time (new direction selection interval): `targetMaxChangeTime` (`Number`) = `0.5`
+        * Motion change acceleration: `targetChangeAccel` (`Number`) = `50`
     * Color (full/min health are interpolated between)
         * Aim off target color: `offTargetColor` (`Color`) = `#d31286`
         * Aim on target color: `onTargetColor` (`Color`) = `#91e600`
