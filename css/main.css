@@ -1,0 +1,408 @@
+:root {
+    /* General NVIDIA styling */
+    --nv_green: #76b900;
+    --nv_font: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+
+    /* Colors for results */
+    --low_lat_color: #76b900;
+    --mid_lat_color: #da8300;
+    --high_lat_color: #d50000;
+    --lat_result_outline: 0.3px #ffffff;
+
+    /* Other colors and styling */
+    --default_text: #ffffff;
+    --default_shadow: #9E9E9E;
+    --low_contrast_text: #808080;
+
+    --table_text: #DEDEDE;
+    --table_outline: 2px solid #808080;
+    --controls-text: #BBBBBB;
+
+    --button_text: #000000;
+    --buton_bg: var(--nv_green);
+    
+    --banner_bg: rgba(0,0,0,0.7);
+}
+
+.instructions {
+    position: absolute;
+
+    width: 100%;
+    height: 100%;
+    padding : 0; margin: 0;
+
+    user-select: none;
+    cursor: pointer;
+
+    display: -webkit-box;
+    display: -moz-box;
+    display: box;
+
+    -webkit-box-orient: horizontal;
+    -moz-box-orient: horizontal;
+    box-orient: horizontal;
+
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+    box-pack: center;
+
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    box-align: center;
+
+    color: var(--default_text);
+    text-shadow: 1px 1px 1px var(--default_shadow);
+    background-color: var(--banner_bg);
+
+    text-align: center;
+    font-family: var(--nv_font);
+
+    font-size: 28px;
+    line-height: 36px;
+}
+
+.custom_container{
+    position: absolute;
+    width: 100%;
+    top: 2%;
+}
+
+.custom_container p {
+    text-align: center;
+    font-family: var(--nv_font);
+    font-size: 20px;
+    color: var(--default_text);
+    text-shadow: 1px 1px 1px var(--default_shadow);
+}
+
+.fps_label{
+    position: absolute;
+    right: 10px;
+    padding-right: 35px;
+    margin-bottom: 12px;
+    height: 25px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.timer_label {
+    position: absolute;
+    width: 100%;
+    top: 2%;
+    height: 50px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.timer_label p{
+    font-size: 60px;
+}
+
+.checkbox_label{
+    position: absolute;
+    left: 10px;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    height: 25px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the "actual" checkbox input */
+.checkbox_label input {
+    position: absolute;
+    cursor: pointer;
+    opacity: 0;
+    height: 0; 
+    width: 0;
+}
+
+/* Draw a custom checkmark */
+.checkmark{
+    position: absolute;
+    top: 78%;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #000;
+    opacity: 0.3;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* On mouse-over, add a grey background color */
+.checkbox_label:hover input ~ .checkmark {
+    background-color: #000;
+    opacity: 1.0;
+}
+
+/* On checked, set to active color */
+.checkbox_label input:checked ~ .checkmark {
+    background-color: var(--nv_green);
+}
+
+/* Show the checkmark when checked */
+.checkbox_label input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark check */
+.checkbox_label .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.custom_slider{
+    -webkit-appearance: none;
+
+    position: absolute;
+    left: 25%;
+
+    width: 50%;
+    height: 10px;
+    border-radius: 5px;  
+
+    background: #000;
+    opacity: 0.3;
+    transition: opacity .2s;
+}
+
+.controls_table {
+    margin-left: auto;
+    margin-right: auto;
+    text-shadow: none;
+    border-width: 0;
+}
+
+.controls_table td {
+    font-size: 20;
+    text-align: left;
+    padding: 8px;
+    border: 0;
+    color: var(--controls-text);
+}
+    
+.controls_table td:first-child {
+    font-weight: bold;
+    text-align: right;
+}
+
+#results_table{
+    width: 80%;
+    display: none;
+
+    margin-left: auto;
+    margin-right:auto;
+    margin-top: 10px;
+}
+
+table, th, td {
+    border: var(--table_outline);
+    color: var(--table_text);
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td {
+    text-align: center;
+}
+
+a:link, a:visited {
+    color: var(--nv_green);
+}
+
+button {
+    border: none;
+    color: var(--button_text);
+    background-color: var(--buton_bg);
+    font-family: var(--nv_font);
+    font-size: 16px;
+    border-radius: 10px;
+    padding: 5px 15px;
+    cursor: pointer;
+}
+
+.custom_slider:hover{
+    opacity: 1.0;
+}
+
+.custom_slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    background: var(--nv_green);
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.custom_slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: var(--nv_green);
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+#banner {
+    position: absolute;
+    display: inline;
+
+    width: 100%;
+    height: 80px;
+
+    background: rgba(0,0,0, 0.5);
+
+    text-align: center;
+    font-family: var(--nv_font);
+    font-size: 12pt;
+}
+
+#banner h1 {
+    display: inline-block;
+    color: var(--default_text);
+    width: 30%;
+}
+
+#results {
+    visibility: hidden;
+    width: 80%;
+    height: 60%;
+    left: 15%;
+    top: 20%;
+
+    position: absolute;
+    background-color: var(--banner_bg);
+
+    /* display: -webkit-box;
+    display: -moz-box;
+    display: box; */
+    display: inline-block;
+
+    -webkit-box-orient: horizontal;
+    -moz-box-orient: horizontal;
+    box-orient: horizontal;
+
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+    box-pack: center;
+
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    box-align: center;
+
+    color: var(--default_text);
+    text-align: center;
+    font-family: var(--nv_font);
+    font-size: 14px;
+    line-height: 24px;
+}
+
+#lowlatresult, #midlatresult, #highlatresult {
+    position: absolute;
+    top: 0;
+
+    width: 33%;
+    height: 40%;
+
+    text-align: center;
+    font-family: var(--nv_font);
+    font-size: 18px;
+    line-height: 30px;
+    -webkit-text-stroke: var(--lat_result_outline);
+}
+
+#lowlatresult {
+    left: 0;
+    color: var(--low_lat_color);
+}
+
+#midlatresult {
+    left:33%;
+    color: var(--mid_lat_color);
+}
+
+#highlatresult {
+    left:66%;
+    color: var(--high_lat_color);
+}
+
+#middiffresult, #highdiffresult {
+    position: absolute;
+    width: 50%;
+    height: 20%;
+    top: 50%;
+    
+    text-align: center;
+    font-family: var(--nv_font);
+    font-size: 20px;
+    -webkit-text-stroke: var(--lat_result_outline);
+}
+
+#middiffresult {
+    left: 0;
+    color: var(--mid_lat_color);
+}
+
+#highdiffresult {
+    left: 50%;
+    color:var(--high_lat_color);
+}
+
+#resultsActions {
+    position: absolute;
+    width: 100%;
+    height: 10%;
+    top: 75%;
+
+    text-align: center;
+    font-family: var(--nv_font);
+    font-size: 15px;
+}
+
+#resultsActions p {
+    color: var(--low_contrast_text);
+}
+
+/* Re-style the dat.gui elements (NV green where possible/easy) */
+.dg *{
+    font-family: var(--nv_font);
+}
+
+.dg .c .slider-fg{
+    background: var(--nv_green) !important;
+}
+
+.dg .cr.number {
+    border-left: 3px solid var(--nv_green) !important;
+}
+
+.dg .cr.boolean {
+border-left: 3px solid var(--nv_green) !important;
+}
+
+.dg .cr.number input[type=text] {
+    color: var(--nv_green) !important;
+}
