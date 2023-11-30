@@ -430,6 +430,7 @@ var config = {
     maxSpeed : getURLParamIfPresent('targetMaxSpeed', 8),                  // Maximum target speed (uniform random in range)
     minChangeTime : getURLParamIfPresent('targetMinChangeTime', 0.25),      // Minimum target direction change time (uniform random in range)
     maxChangeTime : getURLParamIfPresent('targetMaxChangeTime' , 0.5),      // Maximum target direction change tiem (uniform random in range)
+    changeAccel: getURLParamIfPresent('targetChangeAccel', 100000),         // Acceleration to apply to target velocity changes
     offColor : getURLParamIfPresent('offTargetColor', '#d31286'),           // Color when aim is off target (not tracked)
     onColor : getURLParamIfPresent('onTargetColor', '#91e600'),             // Color when aim is on target (tracked)
     
@@ -1071,13 +1072,16 @@ function makeTarget(spawnPosition, targetRadius = 1, speed = 0, targetColor = ne
   target.radius = targetRadius;    
   target.position.set(spawnPosition.x, spawnPosition.y, spawnPosition.z);
   target.speed = speed;
+  target.lastSpeed = speed;
+  target.newSpeed = speed;
+  target.lerpTime = 0;
+  target.lerpTotal = 1;
   target.velocity = new THREE.Vector3(0,0,0);
   target.timeToNextChange = timeToChange;
   target.timeToNextJumpCrouch = randInRange(config.targets.minJumpCrouchTime, config.targets.maxJumpCrouchTime);
   target.inJump = false;
   target.health = 1.0;
   target.duration = 0;
-  target.rotDir = randSign(); // Use ±1 to encode CW/CCW
 
   // Add to management and return
   targets.push(target);
@@ -1174,19 +1178,28 @@ function updateTargets(dt) {
 
     // Check for time to change velocity
     target.timeToNextChange -= dt;
+    if (target.lerpTime > 0) target.lerpTime -= dt;
+    else target.lerpTime = 0;
+
     if(target.timeToNextChange <= 0 && canChangeVelocity){
-      target.speed = randInRange(config.targets.minSpeed, config.targets.maxSpeed);
-      target.rotDir = randSign();
+      target.lastSpeed = target.newSpeed;
+      target.newSpeed = randSign() * randInRange(config.targets.minSpeed, config.targets.maxSpeed);
+      target.lerpTime = Math.abs(target.newSpeed - target.lastSpeed) / config.targets.changeAccel;
+      target.lerpTotal = target.lerpTime; // Keep this for lerp
       target.timeToNextChange = randInRange(config.targets.minChangeTime, config.targets.maxChangeTime);
     }
+
+    // Apply linear acceleration
+    const a = 1 - (target.lerpTime / target.lerpTotal);
+    target.speed = lerp(target.lastSpeed, target.newSpeed, a);
 
     // Keep target moving on a circle around the player'
     var dpos = new THREE.Vector3().subVectors(target.position, fpsControls.position());
     var old_y_vel = target.velocity.y;
     target.velocity = new THREE.Vector3(-dpos.z, 0, dpos.x).normalize() // Make the speed vector
-    target.velocity.x *= target.speed * target.rotDir;
+    target.velocity.x *= target.speed;
     target.velocity.y = old_y_vel;
-    target.velocity.z *= target.speed * target.rotDir;
+    target.velocity.z *= target.speed;
 
     // Target jump gravity (only apply to non-reference targets)
     if(!referenceTarget){
@@ -1600,6 +1613,11 @@ function makeGUI() {
  */
 Array.prototype.avg = function() {
   return this.reduce((sum,el) => sum + el, 0) / this.length;
+}
+
+var lerp = function(v1, v2, a) {
+  a = Math.min(a, 1); a = Math.max(0, a);   // Make sure 0 < a < 1
+  return v1 + (v2-v1) * a;                  // Return interpolation result
 }
 
 /**
