@@ -430,7 +430,7 @@ var config = {
     maxSpeed : getURLParamIfPresent('targetMaxSpeed', 8),                  // Maximum target speed (uniform random in range)
     minChangeTime : getURLParamIfPresent('targetMinChangeTime', 0.25),      // Minimum target direction change time (uniform random in range)
     maxChangeTime : getURLParamIfPresent('targetMaxChangeTime' , 0.5),      // Maximum target direction change tiem (uniform random in range)
-    changeAccel: getURLParamIfPresent('targetChangeAccel', 100000),         // Acceleration to apply to target velocity changes
+    changeAccel: getURLParamIfPresent('targetChangeAccel', 50),             // Acceleration to apply to target velocity changes
     offColor : getURLParamIfPresent('offTargetColor', '#d31286'),           // Color when aim is off target (not tracked)
     onColor : getURLParamIfPresent('onTargetColor', '#91e600'),             // Color when aim is on target (tracked)
     
