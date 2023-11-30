@@ -54,7 +54,7 @@ invertYCheckbox.oninput = function() {
 var set_latency = function(lat) {
   config.render.frameDelay = lat;
   rawInputState.frameDelay = lat;
-  // console.log('Set latency to ' + lat + ' frames');
+  console.log('Set latency to ' + lat + ' frames');
 }
 
 const latencySlider = document.getElementById("latSlider");
@@ -125,6 +125,9 @@ var nextState = function(){
     // Optionally randomize the condition order
     if(RANDOM_ORDER) frameDelays.sort(() => Math.random() - 0.5);
     console.log('Testing conditions: ' + frameDelays);
+    // Set the first latency
+    set_latency(frameDelays[0]);
+    // Update header/instructions
     measHeader.innerText = `Measurement Phase ${frameDelayIndex+1}/${frameDelays.length}`
     sensitivityDiv.style.visibility = 'hidden';
     latencyDiv.style.visibility = 'hidden';
