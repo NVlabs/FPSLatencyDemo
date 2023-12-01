@@ -72,6 +72,14 @@ function drawReticle(){
   reticleGroup.position.set(0, 0, -1);      // Set the distance to the group
 }
 
+function updateReticle(timeSinceFire) {
+  // Scale reticle based on time since last shot
+  if(timeSinceFire < config.reticle.shrinkTime){     
+    const scale = config.reticle.expandedScale * (1  - timeSinceFire / config.reticle.shrinkTime) + 1;
+    reticleGroup.scale.x = scale; reticleGroup.scale.y = scale; reticleGroup.scale.z = scale;
+  }
+}
+
 var c2p = new THREE.Mesh();             // Mesh for storing click-to-photon region
 /**
  * Draw the click-to-photon region (based on config parameters)

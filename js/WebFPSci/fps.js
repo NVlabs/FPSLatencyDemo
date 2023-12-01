@@ -612,8 +612,10 @@ function animate() {
   else requestAnimationFrame( animate );                // "Modern" way of animating, but produces some issues
 
   const now  = Date.now();
-  const dt = (now - last_update_time) / 1e3;
-  frameTimes.push(now - last_update_time);
+  const dt_ms = now - last_update_time;
+  const dt = dt_ms / 1e3;
+
+  frameTimes.push(dt_ms);
   if(frameTimes.length > numFrameTimes) {
     frameTimes.shift();
     frameTimeValid = true;
@@ -631,40 +633,22 @@ function animate() {
   if ( fpsControls.enabled ) {
     raycaster.set(camera.getWorldPosition(new THREE.Vector3()), camera.getWorldDirection(new THREE.Vector3()));
     if (clickShot) fire(now); // Handle request for weapon fire
-    updateTargets((now - last_update_time)/1000);     // Move targets after fire (if first person controls are enabled)
+    
+    updateTargets(dt);         // Move targets after fire (if first person controls are enabled)
     simulateParticles(now);    // Simulate particles
   }
 
   // Handle rendering here
-  if (!config.render.setFPS || (now - last_render_time >= 0.95 * (1000 / config.render.frameRate))) {
+  if (!config.render.setFPS || (dt >= 0.95 * (1 / config.render.frameRate))) {
 
-     // Scale reticle based on time since last shot
-     if(now - last_fire_time < 1000 * config.reticle.shrinkTime){     
-      const scale = config.reticle.expandedScale * (1  - (now - last_fire_time) / (1000 * config.reticle.shrinkTime)) + 1;
-      reticleGroup.scale.x = scale; reticleGroup.scale.y = scale; reticleGroup.scale.z = scale;
-    }
+    updateReticle((now-last_fire_time)/1e3);    // Update (shrink) reticle based on time since last fire
 
     if(config.render.latewarp) renderer.setRenderTarget( renderedImage );  // Change render target for latewarp
+    last_render_time = now;                           // Update the last render time
+    renderer.render( scene, camera );                 // Render the scene
+    if(config.render.latewarp) applyLatewarp();       // Latewarp here
+    stats.update();    // Update render stats
 
-    last_render_time = now;                       // Update the last render time
-    renderer.render( scene, camera );             // Render the scene
-
-    if(config.render.latewarp) {
-      // Latewarp here
-      const recentCameraToWorld = new THREE.Matrix4().makeRotationFromEuler(rawInputState.cameraRotation);
-      const recentWorldToCamera = new THREE.Matrix4().getInverse(recentCameraToWorld);
-      var oldWorldToCamera = camera.matrixWorld.clone();
-      oldWorldToCamera.setPosition(0.0, 0.0, 0.0);
-      warpTransform.copy(camera.projectionMatrix);
-      warpTransform.multiply(recentWorldToCamera);
-      warpTransform.multiply(oldWorldToCamera);
-      warpTransform.multiply(camera.projectionMatrixInverse);
-      renderer.setRenderTarget( null );                           // Render to the frame buffer
-      renderer.shadowMap.enabled = false;
-      renderer.render( warpScene, warpCamera );                   // Render the scene
-      renderer.shadowMap.enabled = true;
-    }
-    stats.update();
   }
 
   last_update_time = now;

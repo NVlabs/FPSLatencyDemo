@@ -35,4 +35,19 @@ var warpQuad = new THREE.Mesh(          // Use a single textured quad for warp
         uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
       },
     })
-  );
+);
+
+function applyLatewarp() {
+  const recentCameraToWorld = new THREE.Matrix4().makeRotationFromEuler(rawInputState.cameraRotation);
+  const recentWorldToCamera = new THREE.Matrix4().getInverse(recentCameraToWorld);
+  var oldWorldToCamera = camera.matrixWorld.clone();
+  oldWorldToCamera.setPosition(0.0, 0.0, 0.0);
+  warpTransform.copy(camera.projectionMatrix);
+  warpTransform.multiply(recentWorldToCamera);
+  warpTransform.multiply(oldWorldToCamera);
+  warpTransform.multiply(camera.projectionMatrixInverse);
+  renderer.setRenderTarget( null );                           // Render to the frame buffer
+  renderer.shadowMap.enabled = false;
+  renderer.render( warpScene, warpCamera );                   // Render the scene
+  renderer.shadowMap.enabled = true;
+}
