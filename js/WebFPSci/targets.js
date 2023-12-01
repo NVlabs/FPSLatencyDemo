@@ -25,6 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Target management
 var targets = [];
+var referenceTarget = true;     // Status tracking for whether a reference target is displayed
 
 /**
  * Spawn a new (randomized/reference) target within the scene

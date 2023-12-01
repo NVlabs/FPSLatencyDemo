@@ -56,8 +56,6 @@ var makeWalls = function(){
   world.add(backWall);
 }
 
-var referenceTarget = true;     // Status tracking for whether a reference target is displayed
-
 /**
  * Update the background/skybox for the scene (can be solid color or cubemap skybox)
  */
