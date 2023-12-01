@@ -29,6 +29,9 @@ var stateIdx = -1;
 var state = "sensitivity";           // Start out in sensitivity adjustment 
 var inMeas = false;                  // Measurement state flag
 
+var timeRemainingS = MEAS_DUR_S;
+var timeOnTarget = 0;
+
 const sensitivitySlider = document.getElementById("sensSlider");
 const sensitivityDiv = document.getElementById("sensSliderDiv");
 sensitivitySlider.oninput = function() {
@@ -160,6 +163,20 @@ var nextMeasCondition = function(){
     measHeader.innerText = 'Measurement Complete!';
     timeIndicator.style.display = 'none';
     showResults();
+  }
+}
+
+// State update for reference target destroyed
+function expRefTargetDestroyed(){
+  if(state == 'measurement') {
+    inMeas = true;
+    timeRemainingS = MEAS_DUR_S;
+  }
+}
+
+function expLogTimeOnTarget(dt) {
+  if(inMeas){
+    timeOnTarget += dt; // Track time spent on target
   }
 }
 

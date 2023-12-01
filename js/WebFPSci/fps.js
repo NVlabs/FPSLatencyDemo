@@ -507,16 +507,13 @@ function fire(now) {
       if (targets.includes(intersect.object)){            // See if we hit a target first
         if(!referenceTarget) {
           hits++;
-          if(inMeas)timeOnTarget += (now - last_update_time)/1000; // Track time spent on target
+          expLogTimeOnTarget((now - last_update_time) / 1000);
         }
         var destroyed = damageTarget(intersect.object, intersect.point);   // Damage the target
         if(destroyed){
           makeExplodeSound();
           if(referenceTarget) {     // Reference target destroyed, spawn first target(s)
-            if(state == 'measurement') {
-              inMeas = true;
-              timeRemainingS = MEAS_DUR_S;
-            }
+            expRefTargetDestroyed();
             while(targets.length < config.targets.count) { spawnTarget(); }
           }
           else {
@@ -599,9 +596,6 @@ var hits = 0;                         // Total number of hits (misses are shots 
 /**
  * Periodic/self scheduling animation
  */
-var timeRemainingS = MEAS_DUR_S;
-
-var timeOnTarget = 0;
 function animate() {
 
   if (config.render.setFPS) setTimeout(animate, 1);
