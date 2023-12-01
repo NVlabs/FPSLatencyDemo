@@ -25,17 +25,19 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Particle Effects
 var particles = new Array();              // Empty particles array
+var last_particle_update = 0;             // Last particle update time
+const particleSimRate = 60;               // Particle simulation rate
 
-/**
- * Generate a random position at a given radius (from the origin)
- * @param {Radial distance} radius 
- * @returns Random position at distance
- */
-function randomPosition(radius) {
-    radius = radius * Math.random();
-    const theta = Math.random() * 2.0*Math.PI;
-    const phi = Math.random() * Math.PI;
-    return [radius * Math.sin(phi) * Math.cos(theta), radius * Math.sin(phi) * Math.sin(theta), radius * Math.cos(phi)];
+function simulateParticles(now) {
+  if(now - last_particle_update > (1e3 / particleSimRate)){    // Always update particles at 60Hz (temporary?)
+    last_particle_update = now;
+    if (particles.length > 0) {
+      var pLength = particles.length;
+      while (pLength--) {
+        particles[pLength].prototype.update(pLength);
+      }
+    }
+  }
 }
   
 /**

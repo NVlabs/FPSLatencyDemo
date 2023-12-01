@@ -538,7 +538,6 @@ function init() {
 }
 
 var last_fire_time = 0;               // Last weapon fire time
-var last_particle_update = 0;         // Last particle update time
 var last_render_time = 0;             // Last render time, used for frame rate management
 var last_update_time = Date.now();    // Last simulation update time
 
@@ -650,7 +649,6 @@ function animate() {
               targets[0].material.color = new THREE.Color(config.targets.offColor);
             }
           }
-          updateBanner();
         }
         if(config.weapon.auto === false) clickShot = false;    // Reset the click shot semaphore if not automatic
       }
@@ -660,15 +658,7 @@ function animate() {
     updateTargets((now - last_update_time)/1000);
 
     // Simulate particles
-    if(now - last_particle_update > 16.66){    // Always update particles at 60Hz (temporary?)
-      last_particle_update = now;
-      if (particles.length > 0) {
-        var pLength = particles.length;
-        while (pLength--) {
-          particles[pLength].prototype.update(pLength);
-        }
-      }
-    }
+    simulateParticles(now);
   }
 
   // Handle rendering here

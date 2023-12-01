@@ -43,3 +43,15 @@ function randInRange(min, max) { return (max - min) * Math.random() + min; }
 
 /** Random sign (±1) */
 function randSign() { return Math.random() < 0.5 ? -1 : 1; }
+
+/**
+ * Generate a random position at a given radius (from the origin)
+ * @param {Radial distance} radius 
+ * @returns Random position at distance
+ */
+function randomPosition(radius) {
+  radius = radius * Math.random();
+  const theta = Math.random() * 2.0*Math.PI;
+  const phi = Math.random() * Math.PI;
+  return [radius * Math.sin(phi) * Math.cos(theta), radius * Math.sin(phi) * Math.sin(theta), radius * Math.cos(phi)];
+}
