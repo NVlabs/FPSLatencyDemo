@@ -136,6 +136,7 @@ var totResults = {};        // Storage for time on target results
 var measLatencies = {};     // Storage for latency measured in each condition
 
 const measHeader = document.getElementById("measHeader");
+const timeIndicator = document.getElementById("time_indicator");
 
 var nextMeasCondition = function(){
   inMeas = false; // Reset this flag
@@ -159,6 +160,19 @@ var nextMeasCondition = function(){
     measHeader.innerText = 'Measurement Complete!';
     timeIndicator.style.display = 'none';
     showResults();
+  }
+}
+
+function expAnimate(dt) {
+  // Update time remaining indicator
+  if(inMeas && timeRemainingS > 0){
+    timeRemainingS -= dt;
+    timeIndicator.innerText = timeRemainingS.toFixed(2) + "s";
+    // console.log(timeRemainingS)
+  }
+  else if(state == 'measurement' && !condComplete && timeRemainingS <= 0){
+    condComplete = true;
+    nextMeasCondition();
   }
 }
 

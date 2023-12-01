@@ -23,6 +23,21 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 "use strict"                      // Execute this code in "strict mode"
 
+const fpsIndicator = document.getElementById("fps_indicator");
+
+function updateFpsIndicator(avgFrameRate) {
+  fpsIndicator.innerText = avgFrameRate.toFixed(2)+ " fps";
+  if(avgFrameRate < MIN_FRAME_RATE) {
+    fpsIndicator.style.color = '#F00';
+    fpsIndicator.style.textShadow = '1px 1px 1px rgb(175, 50, 50)';
+    fpsIndicator.innerText += '\nLow FPS!!!';
+  }
+  else {
+    fpsIndicator.style.color = '#FFF'
+    fpsIndicator.style.textShadow = '1px 1px 1px #9E9E9E';
+  }
+}
+
 // Create the reticle
 var reticleGroup = new THREE.Group();   // Group for storing reticle elements
 /**

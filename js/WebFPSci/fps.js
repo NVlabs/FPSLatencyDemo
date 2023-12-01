@@ -486,6 +486,59 @@ function onWindowResize() {
   drawC2P();
 }
 
+// Fire the weapon
+function fire(now) {
+  const rot = randInRange(0, 2*Math.PI); 
+  const mag = randInRange(0, config.weapon.fireSpread * Math.PI / 180);
+  const randomRot = new THREE.Vector3(mag * Math.cos(rot), mag * Math.sin(rot), 0);
+
+  raycaster.ray.direction.applyAxisAngle(new THREE.Vector3(1, 0, 0), randomRot.x);
+  raycaster.ray.direction.applyAxisAngle(new THREE.Vector3(0, 1, 0), randomRot.y);
+
+  if((now - last_fire_time) >= (1000 * config.weapon.firePeriod)){         // Check for whether the weapon can fire\
+    // We can fire, do so here
+    last_fire_time = now;
+    if(!referenceTarget) shots++;
+    makeFireSound();
+    var intersects = raycaster.intersectObjects(world.children);          // Handle intersection of shot with world
+    // Check for hit
+    if ( intersects.length > 0 ) {
+      var intersect = intersects[ 0 ];                    // Get first hit
+      if (targets.includes(intersect.object)){            // See if we hit a target first
+        if(!referenceTarget) {
+          hits++;
+          if(inMeas)timeOnTarget += (now - last_update_time)/1000; // Track time spent on target
+        }
+        var destroyed = damageTarget(intersect.object, intersect.point);   // Damage the target
+        if(destroyed){
+          makeExplodeSound();
+          if(referenceTarget) {     // Reference target destroyed, spawn first target(s)
+            if(state == 'measurement') {
+              inMeas = true;
+              timeRemainingS = MEAS_DUR_S;
+            }
+            while(targets.length < config.targets.count) { spawnTarget(); }
+          }
+          else {
+            targets_destroyed += 1;
+            target_times.push(intersect.object.duration);
+            spawnTarget();     // Replace this target with another like it
+          }
+        }
+      }
+      else{ // Missed the target
+        if(config.weapon.missParticles) {
+          makeParticles(intersect.point, new THREE.Color(0,0,0), config.weapon.missParticleSize, config.weapon.missParticleCount, config.weapon.missParticleDuration);
+        }
+        if(!referenceTarget) {
+          targets[0].material.color = new THREE.Color(config.targets.offColor);
+        }
+      }
+    }
+    if(config.weapon.auto === false) clickShot = false;    // Reset the click shot semaphore if not automatic
+  }
+}
+
 // Event listeners for mouse click
 var clickShot = false;                            // Did a click occur?
 var inScopeView = false;                          // Are we in a scoped view?
@@ -550,8 +603,6 @@ var hits = 0;                         // Total number of hits (misses are shots 
 /**
  * Periodic/self scheduling animation
  */
-const fpsIndicator = document.getElementById("fps_indicator");
-const timeIndicator = document.getElementById("time_indicator");
 var timeRemainingS = MEAS_DUR_S;
 
 var timeOnTarget = 0;
@@ -561,6 +612,7 @@ function animate() {
   else requestAnimationFrame( animate );                // "Modern" way of animating, but produces some issues
 
   const now  = Date.now();
+  const dt = (now - last_update_time) / 1e3;
   frameTimes.push(now - last_update_time);
   if(frameTimes.length > numFrameTimes) {
     frameTimes.shift();
@@ -568,30 +620,8 @@ function animate() {
   }
 
   // Update the FPS indicator if valid
-  if(frameTimeValid){
-    var avgFrameRate = 1e3 / frameTimes.avg();
-    fpsIndicator.innerText = avgFrameRate.toFixed(2)+ " fps";
-    if(avgFrameRate < MIN_FRAME_RATE) {
-      fpsIndicator.style.color = '#F00';
-      fpsIndicator.style.textShadow = '1px 1px 1px rgb(175, 50, 50)';
-      fpsIndicator.innerText += '\nLow FPS!!!';
-    }
-    else {
-      fpsIndicator.style.color = '#FFF'
-      fpsIndicator.style.textShadow = '1px 1px 1px #9E9E9E';
-    }
-  }
-
-  // Update time remaining indicator
-  if(inMeas && timeRemainingS > 0){
-    timeRemainingS -= (now - last_update_time) / 1000;
-    timeIndicator.innerText = timeRemainingS.toFixed(2) + "s";
-    // console.log(timeRemainingS)
-  }
-  else if(state == 'measurement' && !condComplete && timeRemainingS <= 0){
-    condComplete = true;
-    nextMeasCondition();
-  }
+  if(frameTimeValid) updateFpsIndicator(1e3 / frameTimes.avg());
+  expAnimate(dt);
 
   rawInputState.update();
   fpsControls.processDelayedEvents(rawInputState.getDelayedFrameEvents());
@@ -600,65 +630,9 @@ function animate() {
   // Game processing that only occurs when the mouse is captured
   if ( fpsControls.enabled ) {
     raycaster.set(camera.getWorldPosition(new THREE.Vector3()), camera.getWorldDirection(new THREE.Vector3()));
-  
-    // Handle request for weapon fire
-    if (clickShot) {
-      const rot = randInRange(0, 2*Math.PI); 
-      const mag = randInRange(0, config.weapon.fireSpread * Math.PI / 180);
-      const randomRot = new THREE.Vector3(mag * Math.cos(rot), mag * Math.sin(rot), 0);
-  
-      raycaster.ray.direction.applyAxisAngle(new THREE.Vector3(1, 0, 0), randomRot.x);
-      raycaster.ray.direction.applyAxisAngle(new THREE.Vector3(0, 1, 0), randomRot.y);
-
-      if((now - last_fire_time) >= (1000 * config.weapon.firePeriod)){         // Check for whether the weapon can fire\
-        // We can fire, do so here
-        last_fire_time = now;
-        if(!referenceTarget) shots++;
-        makeFireSound();
-        var intersects = raycaster.intersectObjects(world.children);          // Handle intersection of shot with world
-        // Check for hit
-        if ( intersects.length > 0 ) {
-          var intersect = intersects[ 0 ];                    // Get first hit
-          if (targets.includes(intersect.object)){            // See if we hit a target first
-            if(!referenceTarget) {
-              hits++;
-              if(inMeas)timeOnTarget += (now - last_update_time)/1000; // Track time spent on target
-            }
-            var destroyed = damageTarget(intersect.object, intersect.point);   // Damage the target
-            if(destroyed){
-              makeExplodeSound();
-              if(referenceTarget) {     // Reference target destroyed, spawn first target(s)
-                if(state == 'measurement') {
-                  inMeas = true;
-                  timeRemainingS = MEAS_DUR_S;
-                }
-                while(targets.length < config.targets.count) { spawnTarget(); }
-              }
-              else {
-                targets_destroyed += 1;
-                target_times.push(intersect.object.duration);
-                spawnTarget();     // Replace this target with another like it
-              }
-            }
-          }
-          else{ // Missed the target
-            if(config.weapon.missParticles) {
-              makeParticles(intersect.point, new THREE.Color(0,0,0), config.weapon.missParticleSize, config.weapon.missParticleCount, config.weapon.missParticleDuration);
-            }
-            if(!referenceTarget) {
-              targets[0].material.color = new THREE.Color(config.targets.offColor);
-            }
-          }
-        }
-        if(config.weapon.auto === false) clickShot = false;    // Reset the click shot semaphore if not automatic
-      }
-    }
-
-    // Move targets after fire (if first person controls are enabled)
-    updateTargets((now - last_update_time)/1000);
-
-    // Simulate particles
-    simulateParticles(now);
+    if (clickShot) fire(now); // Handle request for weapon fire
+    updateTargets((now - last_update_time)/1000);     // Move targets after fire (if first person controls are enabled)
+    simulateParticles(now);    // Simulate particles
   }
 
   // Handle rendering here
@@ -670,9 +644,7 @@ function animate() {
       reticleGroup.scale.x = scale; reticleGroup.scale.y = scale; reticleGroup.scale.z = scale;
     }
 
-    if(config.render.latewarp){
-      renderer.setRenderTarget( renderedImage );  // Change render target for latewarp
-    }
+    if(config.render.latewarp) renderer.setRenderTarget( renderedImage );  // Change render target for latewarp
 
     last_render_time = now;                       // Update the last render time
     renderer.render( scene, camera );             // Render the scene
