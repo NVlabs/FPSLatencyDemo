@@ -544,7 +544,7 @@ var clickShot = false;                            // Did a click occur?
 var inScopeView = false;                          // Are we in a scoped view?
 
 // Setup storage for high-level primitives
-var camera, warpCamera;                   // Cameras
+var camera;                               // Main camera
 var renderer, raycaster, fpsControls;     // Renderer, (fire) ray caster, and FPS controls
 var rawInputState;                        // The inupt delay queue is between this and processGameInputEvent
 
@@ -573,19 +573,15 @@ function init() {
   document.body.appendChild( renderer.domElement );
   //renderer.outputEncoding = THREE.sRGBEncoding;
 
-  warpCamera = new THREE.OrthographicCamera(-aspect/2, aspect/2, 1/2, -1/2, near, far);
-
   window.addEventListener( 'resize', onWindowResize, false );
   statsContainer.appendChild(stats.dom);
 
   makeScene();
   fpsControls.scene = world;
 
+  initLatewarp(aspect, near, far);
   drawReticle();
   drawC2P();
-
-  warpScene.add(warpQuad);
-  warpScene.add(warpCamera);
 
   nextState();
 }
@@ -594,9 +590,9 @@ var last_fire_time = 0;               // Last weapon fire time
 var last_render_time = 0;             // Last render time, used for frame rate management
 var last_update_time = Date.now();    // Last simulation update time
 
+// Target metrics
 var targets_destroyed = 0;            // Total targets destroyed
 var target_times = [];                // Time from each targets spawn to destruction
-
 var shots = 0;                        // Total shots taken
 var hits = 0;                         // Total number of hits (misses are shots - hits)
 

@@ -1,3 +1,7 @@
+var warpTransform = new THREE.Matrix4();
+var warpScene = new THREE.Scene();
+var warpCamera;
+
 var renderedImage = new THREE.WebGLMultisampleRenderTarget(window.innerWidth, window.innerHeight, {
     format: THREE.RGBFormat,
       stencilBuffer: false,
@@ -5,9 +9,6 @@ var renderedImage = new THREE.WebGLMultisampleRenderTarget(window.innerWidth, wi
       minFilter: THREE.LinearFilter,
       magFilter: THREE.NearestFilter
 });
-  
-var warpTransform = new THREE.Matrix4();
-var warpScene = new THREE.Scene();
   
 var warpQuad = new THREE.Mesh(          // Use a single textured quad for warp
     new THREE.PlaneGeometry(2, 2),
@@ -36,6 +37,12 @@ var warpQuad = new THREE.Mesh(          // Use a single textured quad for warp
       },
     })
 );
+
+function initLatewarp(aspect, near, far) {
+  warpCamera = new THREE.OrthographicCamera(-aspect/2, aspect/2, 1/2, -1/2, near, far);
+  warpScene.add(warpQuad);
+  warpScene.add(warpCamera);
+}
 
 function applyLatewarp() {
   const recentCameraToWorld = new THREE.Matrix4().makeRotationFromEuler(rawInputState.cameraRotation);
