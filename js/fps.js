@@ -179,6 +179,7 @@ const highlatresult = document.getElementById("highlatresult");
 const middiffresult = document.getElementById("middiffresult");
 const highdiffresult = document.getElementById("highdiffresult");
 const resultsTable = document.getElementById("results_table");
+const resultsLink = document.getElementById("resultsLink");
 var resultsDisplayed = false;
 
 var showResults = function(){
@@ -208,6 +209,7 @@ var showResults = function(){
     document.getElementById("lowTime").innerText = lowLatTot.toFixed(3);
     document.getElementById("midTime").innerText = midLatTot.toFixed(3);
     document.getElementById("highTime").innerText = highLatTot.toFixed(3);
+    resultsLink.setAttribute('href', `results.html?measurementDuration=${MEAS_DUR_S}&lowResult=${lowLatTot}&midResult=${midLatTot}&highResult=${highLatTot}&midLatFrames=${midLat}&midLatMs=${midLatDiff}&highLatFrames=${highLat}&highLatMs=${highLatDiff}`);
   }
   else { // This is a fixed condition experiment, just display the results table
     lowlatresult.style.display = 'none';

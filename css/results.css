@@ -1,0 +1,76 @@
+:root {
+    background-color: #000;
+    color: var(--default_text);
+    text-align: center;
+    font-family: var(--nv_font);
+}
+
+hr {
+    width: 90%;
+    border: 2px solid #222;
+    border-radius: 1px;
+}
+
+.notes {
+    font-size: 14;
+    color: var(--low_contrast_text);
+}
+
+.exp {
+    font-size: 18;
+    font-weight: bolder;
+}
+
+#fitexp {
+    font-size: 24;
+    color: var(--nv_green);
+}
+
+.lowlat {
+    color: var(--low_lat_color);
+    -webkit-text-stroke: var(--lat_result_outline);
+}
+
+.midlat {
+    color: var(--mid_lat_color);
+    -webkit-text-stroke: var(--lat_result_outline);
+}
+
+.highlat{
+    color: var(--high_lat_color);
+    -webkit-text-stroke: var(--lat_result_outline);
+}
+
+#lowresult, #midresult, #highresult {
+    text-align: center;
+    font-family: var(--nv_font);
+    font-size: 18px;
+    line-height: 30px;
+    -webkit-text-stroke: var(--lat_result_outline);
+}
+
+#lowresult {
+    color: var(--low_lat_color);
+}
+
+#midresult {
+    color: var(--mid_lat_color);
+}
+
+#highresult {
+    color: var(--high_lat_color);
+}
+
+#middiff, #highdiff {
+    text-align: center;
+    font-family: var(--nv_font);
+    -webkit-text-stroke: var(--lat_result_outline);
+}
+
+#middiff {
+    color: var(--mid_lat_color);
+}
+
+#highdiff {
+    color:var(--high_lat_color);
+}
