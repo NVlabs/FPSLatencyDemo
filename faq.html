@@ -38,6 +38,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
         <p>Since it only delays frames, the latency is based on the frame rate. The reported latency is based on the last 100 frames taking the average of the time between those frames. So if the game was running at 100 Hz for the last 100 frames (over 1 second), then you'd get a reported latency of 10 ms for every frame of delay.</p>
         <p>Depending on the mode you ran in, the low latency will add 0 frames, the middle one will add at least 1, and the high latency will add at least 2, giving 0 ms, 10 ms, and 20 ms.</p>
     </div>
+    <div class="container">
+        <h2>What is the default latency value?</h2>
+        <p>If you skip setting your own max latency, the application does its best to add 66 ms of latency by choosing a number of frames to delay based on your performance. Depending what else was running on your computer, you may end up experiencing more or less latency than that, and the end report will try to tell you what you actually felt when you played it.</p>
+    </div>
+    <div class="container">
+        <h2>Can I Customize The Experiment?</h2>
+        <p>Yes! There's a variety of parameters you can customize by just changing the URL you use to try the experiment. Check out <a href="https://github.com/NVlabs/FPSLatencyDemo">the github project</a> for details.</p>
+    </div>
 
 </body>
 
