@@ -1,8 +1,10 @@
 :root {
+    --error_red: #aa0000;
+
     background-color: #000;
     color: var(--default_text);
-    text-align: center;
     font-family: var(--nv_font);
+    text-align: center;
 }
 
 hr {
@@ -17,13 +19,14 @@ hr {
 }
 
 .comment {
-    font-size: 18;
+    font-size: 22;
     font-weight: bolder;
     color: var(--nv_green);
 }
 
 #genComment {
-    font-size: 24;
+    font-size: 28;
+    color: #fff;
 }
 
 #fitexp {
