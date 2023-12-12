@@ -119,8 +119,12 @@ var nextState = function(){
       }
       frameDelays = frameDelays.sort(function(a,b) {return b-a;})
       console.log('Selected JND of ' +  jnd_lat)
+      gtag('event', 'conditions', {'event_category': 'user-conditions', 'value' : frameDelays});
     }
-    else frameDelays = fixedFrameDelays; // Use fixed frame delays
+    else {
+      frameDelays = fixedFrameDelays; // Use fixed frame delays
+      gtag('event', 'conditions', {'event_category': 'fixed-conditions', 'value': frameDelays});
+    }
 
     // Optionally randomize the condition order
     if(RANDOM_ORDER) frameDelays.sort(() => Math.random() - 0.5);
@@ -133,7 +137,11 @@ var nextState = function(){
     latencyDiv.style.visibility = 'hidden';
     timerDiv.style.visibility = 'visible';
   }
+
+  // Log reaching this state
+  gtag('event', `state ${state}`);
   
+  // Make the scene and update the instructions for the new state
   makeScene();
   updateInstructions();
 }
@@ -182,6 +190,12 @@ const resultsTable = document.getElementById("results_table");
 var resultsDisplayed = false;
 
 var showResults = function(){
+  const resultsDict = {
+    "measurementDuration": MEAS_DUR_S,
+    "frameDelays" : frameDelays,
+    "latencies": measLatencies,
+    "timeOnTarget": totResults
+  }
   const sortedConds = frameDelays.sort(function(a,b) {return a-b});    // This should sort low latency, mid latency, high latency
   if(!useFixedFrameDelays) { 
     // No provided frame delays, this is a JND-style result, show colorized results
@@ -208,6 +222,7 @@ var showResults = function(){
     document.getElementById("lowTime").innerText = lowLatTot.toFixed(3);
     document.getElementById("midTime").innerText = midLatTot.toFixed(3);
     document.getElementById("highTime").innerText = highLatTot.toFixed(3);
+    gtag('event', 'results', {'event_category': 'normal-results', 'value': resultsDict});
   }
   else { // This is a fixed condition experiment, just display the results table
     lowlatresult.style.display = 'none';
@@ -235,6 +250,7 @@ var showResults = function(){
     resultsTable.innerHTML = tableHTML; // Add the table
     // Make visible
     toggleResultsTableVisible();
+    gtag('event', 'results', {'event_category': 'custom-results', 'value': resultsDict});
   }
 
   results.style.visibility = 'visible';
