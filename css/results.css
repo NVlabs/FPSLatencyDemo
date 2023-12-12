@@ -16,9 +16,14 @@ hr {
     color: var(--low_contrast_text);
 }
 
-.exp {
+.comment {
     font-size: 18;
     font-weight: bolder;
+    color: var(--nv_green);
+}
+
+#genComment {
+    font-size: 24;
 }
 
 #fitexp {

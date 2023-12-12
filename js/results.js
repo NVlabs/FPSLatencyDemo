@@ -68,13 +68,13 @@ const highLatResult = document.getElementById("highresult");
 const highDiffResult = document.getElementById("highdiff");
 const midlat = document.getElementById("midlat");
 const highlat = document.getElementById("highlat");
-const midExp = document.getElementById("midexp");
-const highExp = document.getElementById("highexp");
-const fitExp = document.getElementById("fitexp");
+const midComment = document.getElementById("midComment");
+const highComment = document.getElementById("highComment");
+const genComment = document.getElementById("genComment");
 
 // Update results fields
-midlat.innerText = `${midLatMs.toFixed(0)} ms / ${midLatFrames} frames`;
-highlat.innerText = `${highLatMs.toFixed(0)} ms / ${highLatFrames} frames`;
+midlat.innerText = `${midLatMs.toFixed(0)} ms or ${midLatFrames} frames`;
+highlat.innerText = `${highLatMs.toFixed(0)} ms or ${highLatFrames} frames`;
 lowLatResult.innerHTML = `<h1>${lowLatTot.toFixed(3)}s (${lowLatAcc.toFixed(2)}%)</h1>`;
 midLatResult.innerHTML = `<h1>${midLatTot.toFixed(3)}s (${midLatAcc.toFixed(2)}%)</h1>`;
 midDiffResult.innerHTML = `${midDiffTot.toFixed(3)}s (${midDiffAcc.toFixed(2)}%)`
@@ -85,34 +85,34 @@ highDiffResult.innerHTML = `${highDiffTot.toFixed(3)}s (${highDiffAcc.toFixed(2)
 if(lowLatTot < midLatTot) {
     // Unexpected case, the low latency time on target was less than the mid latency time on target
     // Indicates possibility of either (1) too small a latency step or (2) not enough training
-    setMidExpErr("You performed better at this latency than at the low latency, this is unexpected.\nTry re-running the experiment, possibly choosing a higher latency!");
+    setMidError("You performed better at this latency than at the low latency, this is unexpected!\nTry re-running the experiment, possibly choosing a higher latency.");
 }
 if(lowLatTot < highLatTot) {
     // Unexpected case the high latency time on target was larger than the low latency time on target
     // Indicates possibility of either (1) too small a latency step or (2) not enough training
-    setHighExpErr("You performed better at this latency than at the low latency, this is unexpected.\nTry re-running the experiment, possibly choosing a higher latency!");
+    setHighError("You performed better at this latency than at the low latency, this is unexpected!\nTry re-running the experiment, possibly choosing a higher latency.");
 }
 if (midLatTot < highLatTot && lowLatTot > midLatTot){
     // Unexpected case, the mid-low relationship is as expected, but the high latency time on target is higher than the mid
     // Indicates possibility of too small of a latency step
-    setHighExpErr("You performed better at this latency than the medium latency, this is unexpected.\nTry re-running the experiment, possibly choosing a lower latency!");
+    setHighError("You performed better at this latency than the medium latency, this is unexpected!\nTry re-running the experiment, possibly choosing a lower latency.");
 }
 
-function setMidExpErr(string) {
-    midExp.innerText = string;
-    midExp.style.color = "#ff0000";
+function setMidError(errorString) {
+    midComment.innerText = errorString;
+    midComment.style.color = "#ff0000";
 }
 
-function setHighExpErr(string) {
-    highExp.innerText = string;
-    highExp.style.color = "#ff0000";
+function setHighError(errorString) {
+    highComment.innerText = errorString;
+    highComment.style.color = "#ff0000";
 }
 
 // Only display this text if fit information is reasonable
 if(r2 > 0.8) {
-    fitExp.innerText = `You gained ${(avgSlope*-1000).toFixed(0)} ms of time on target for every 1 ms of added latency!`;
+    genComment.innerText = `You gained ${(avgSlope*-1000).toFixed(0)} ms of time on target for every 1 ms of added latency!`;
 }
-else fitExp.innerText = '';
+else genComment.innerText = '';
 // else if(r2 > 0.5){
 //     fitExp.innerText = '';
 // }
