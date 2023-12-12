@@ -149,8 +149,8 @@ function setHighError(errorString) {
 }
 
 // Only display this text if fit information is reasonable
-if(r2 > 0.8) {
-    genComment.innerText = `You added ${(avgSlope*-1000).toFixed(0)} ms of time on target for every 1 ms of lower latency!`;
+if(r2 > 0.8 && avgSlope < 0) {
+    genComment.innerText = `You added ${(-1000*avgSlope).toFixed(0)} ms of time on target for every 1 ms of lower latency!`;
 }
 else genComment.innerText = '';
 // else if(r2 > 0.5){
