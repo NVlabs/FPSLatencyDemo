@@ -48,11 +48,12 @@ const midLatAcc = 100 * midLatTot / measDur;
 const highLatAcc = 100 * highLatTot / measDur;
 
 // Get differences as time on target and acc
-var midDiffTot = lowLatTot - midLatTot;
-var midDiffAcc = lowLatAcc - midLatAcc;
-var highDiffTot = lowLatTot - highLatTot;
-var highDiffAcc = lowLatAcc - highLatAcc;
+const midDiffTot = lowLatTot - midLatTot;
+const midDiffAcc = lowLatAcc - midLatAcc;
+const highDiffTot = lowLatTot - highLatTot;
+const highDiffAcc = lowLatAcc - highLatAcc;
 const avgTot = (lowLatTot + midLatTot + highLatTot) / 3;    // Get overall average time on target
+const eqBound = measDur / 100;      // Use this to test if things are roughly equal (1% total duration/max score)
 
 // Produce simple fit
 const midLatSlope = -midDiffTot / midLatMs;
@@ -73,10 +74,8 @@ console.log(`Fit: y = ${avgSlope}x + ${lowLatTot} (r² = ${r2})`);
 const lowLatResult = document.getElementById("lowresult");
 const midLatResult = document.getElementById("midresult");
 const midDiffResult = document.getElementById("middiff");
-const midChange = document.getElementById("midchange");
 const highLatResult = document.getElementById("highresult");
 const highDiffResult = document.getElementById("highdiff");
-const highChange = document.getElementById("highchange");
 const midlat = document.getElementById("midlat");
 const highlat = document.getElementById("highlat");
 const midComment = document.getElementById("midComment");
@@ -91,51 +90,65 @@ midlat.innerText = `${midLatMs.toFixed(0)} ms or ${midLatFrames} frames`;
 highlat.innerText = `${highLatMs.toFixed(0)} ms or ${highLatFrames} frames`;
 lowLatResult.innerHTML = `<h1>${lowLatTot.toFixed(3)}s (${lowLatAcc.toFixed(2)}%)</h1>`;
 midLatResult.innerHTML = `<h1>${midLatTot.toFixed(3)}s (${midLatAcc.toFixed(2)}%)</h1>`;
-if (midDiffTot < 0) {
-    midDiffTot = -midDiffTot;
-    midDiffAcc = -midDiffAcc;
-    midChange.innerText = 'unexpectedly better';
-}
 midDiffResult.innerHTML = `${midDiffTot.toFixed(3)}s (${midDiffAcc.toFixed(2)}%)`
-
 highLatResult.innerHTML = `<h1>${highLatTot.toFixed(3)}s (${highLatAcc.toFixed(2)}%)</h1>`;
-if (highDiffTot < 0) {
-    highDiffTot = -highDiffTot;
-    highDiffAcc = -highDiffAcc;
-    highChange.innerText = 'unexpectedly better';
-}
 highDiffResult.innerHTML = `${highDiffTot.toFixed(3)}s (${highDiffAcc.toFixed(2)}%)`
 
 // Conditional logic
 
+var midComparison;  // Stores result of the low-medium latency comparison
 // Unexpected case, the low latency time on target was less than the mid latency time on target (better mid latency performance)
-if(lowLatTot < midLatTot) {
+if(midDiffTot < -eqBound) {
     // Indicates possibility of either (1) too small a latency step or (2) not enough training
     setMidError("You performed better at medium latency than with no added latency, this is unexpected!\nTry re-running the experiment, possibly choosing a higher latency.");
+    midComparison = 'unexpected';
+}
+// Possible case, no large difference between low and mid latency conditions
+else if(midDiffTot > -eqBound && midDiffTot < eqBound){
+    midComment.innerText  = "You didn't perform much better at medium latency than with no added latency.\nConsider re-running the experiment";
+    midComparison = 'equal';
 }
 else {  // Expected case, we see degredation of the mid latency condition compared to the low latency one
     midComment.innerText = `You got worse at just ~½ the latency you said was barely noticeable!`;
+    midComparison = 'expected';
 }
 
-midHighDiffStr = `${(1e3*(midLatTot-highLatTot)).toFixed(0)} ms (${((midLatAcc-highLatAcc).toFixed(0))}%)`;
+
+const midHighDiffTot = midLatTot - highLatTot;
+const midHighDiffStr = `${(1e3*(midHighDiffTot)).toFixed(0)} ms (${((midLatAcc-highLatAcc).toFixed(0))}%)`;
+var highComparison;
 // Unexpected case the high latency time on target was larger than the low latency time on target
-if(lowLatTot < highLatTot) {
+if(highDiffTot < -eqBound) {
     // Indicates possibility of either (1) too small a latency step or (2) not enough training
     setHighError("You performed better at high latency than with no added latency, this is unexpected!\nTry re-running the experiment, possibly choosing a higher latency.");
+    highComparison = 'unexpected';
 }
 // Unexpected case, the high latency time on target was larger than the mid latency time on target
-else if (midLatTot < highLatTot){
+else if (midHighDiffTot < -eqBound){
     // Indicates possibility of too small of a latency step (performance didn't degrade)
     setHighError("You performed better at high latency than at medium latency, this is unexpected!\nTry re-running the experiment, possibly choosing a lower latency.");
+    highComparison = 'unexpected';
+}
+// Rough equality between high and low latency conditions (could signal too small a latency)
+else if(highDiffTot >= -eqBound && highDiffTot <= eqBound){
+    setHighError("You didn't perform much better than with no added latency, this is unexpected!\nTry re-running the experiment, possible choosing a higher latency.");
+    highComparison = 'equal';
+}
+// Rough equality between high and mid latency conditions (could signal too small a latency)
+else if(midHighDiffTot >= -eqBound && midHighDiffTot <= eqBound){
+    highComment.innerText = "You didn't perform much better than in the medium latency condition.\nConsider testing a higher latency!";
+    highComparison = 'equal';
 }
 // Unexpected case the high-mid relationship is as expected, but the mid latency is invalid
-else if(highLatTot < midLatTot && midLatTot > lowLatTot){
-    highComment.innerText = `You outperformed the medium latency by ${midHighDiffStr} at high latency, but the medium latency time on target was high.\nConsider re-running the experiment.`
+else if(midHighDiffTot > eqBound && midComparison == "unexpected"){
+    highComment.innerText = `You outperformed the medium latency by ${midHighDiffStr} at high latency,\n but the medium latency time on target was high.\nConsider re-running the experiment.`
+    highComparison = 'expected';
 }
 // Expected case, high latency total is lower than both mid and low latency
-else if(highLatTot < midLatTot && highLatTot < lowLatTot) {
+else if(midHighDiffTot > eqBound && highDiffTot > eqBound) {
     // Case where the high latency total is > both others
-    highComment.innerText = `You spent ${midHighDiffStr} more time on target in the medium latency condition! `
+    highComment.innerText = `You spent ${midHighDiffStr} more time on target in the medium latency condition!`
+    highComparison = 'expected';
 }
 
 function setMidError(errorString) {
