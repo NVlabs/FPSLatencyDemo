@@ -94,7 +94,7 @@ midLatResult.innerHTML = `<h1>${midLatTot.toFixed(3)}s (${midLatAcc.toFixed(2)}%
 if (midDiffTot < 0) {
     midDiffTot = -midDiffTot;
     midDiffAcc = -midDiffAcc;
-    midChange.innerText = 'unexpected increase';
+    midChange.innerText = 'unexpectedly better';
 }
 midDiffResult.innerHTML = `${midDiffTot.toFixed(3)}s (${midDiffAcc.toFixed(2)}%)`
 
@@ -102,7 +102,7 @@ highLatResult.innerHTML = `<h1>${highLatTot.toFixed(3)}s (${highLatAcc.toFixed(2
 if (highDiffTot < 0) {
     highDiffTot = -highDiffTot;
     highDiffAcc = -highDiffAcc;
-    highChange.innerText = 'unexpected increase';
+    highChange.innerText = 'unexpectedly better';
 }
 highDiffResult.innerHTML = `${highDiffTot.toFixed(3)}s (${highDiffAcc.toFixed(2)}%)`
 
@@ -114,7 +114,7 @@ if(lowLatTot < midLatTot) {
     setMidError("You performed better at medium latency than with no added latency, this is unexpected!\nTry re-running the experiment, possibly choosing a higher latency.");
 }
 else {  // Expected case, we see degredation of the mid latency condition compared to the low latency one
-    midComment.innerText = `You improved your performance even at ~½ the latency you said was just noticeable!`;
+    midComment.innerText = `You got worse at just ~½ the latency you said was barely noticeable!`;
 }
 
 midHighDiffStr = `${(1e3*(midLatTot-highLatTot)).toFixed(0)} ms (${((midLatAcc-highLatAcc).toFixed(0))}%)`;
