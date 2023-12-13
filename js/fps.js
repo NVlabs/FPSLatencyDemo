@@ -248,6 +248,7 @@ var showResults = function(){
   document.exitPointerLock();
   measurementInstructions.style.display = 'none';
   bannerDiv.style.visibility = 'hidden';
+  faqDiv.style.visibility = 'visible';
 }
 
 // Copies the table to the clipboard as a tab-separated value format (TSV)
@@ -897,6 +898,7 @@ const sensitivityInstructions = document.getElementById("sensInstructions");
 const latencyInstructions = document.getElementById("latInstructions");
 const measurementInstructions = document.getElementById("measInstructions");
 var instructions = sensitivityInstructions;
+const faqDiv = document.getElementById("faqDiv");
 
 var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;      // Check for pointer lock option
 if ( havePointerLock ) {
@@ -912,6 +914,7 @@ if ( havePointerLock ) {
         rawInputState.enable(true);
       fpsControls.enabled = true;
       instructions.style.display = 'none';
+      faqDiv.style.visibility = 'hidden';
       if(state == 'measurement' && !referenceTarget) inMeas = true;
     } 
     else if(!resultsDisplayed) {    // Don't allow re-entering FPS mode when results displayed
@@ -920,6 +923,7 @@ if ( havePointerLock ) {
       // Click handler for pointer lock
       instructions.addEventListener( 'click', plClickListener, false);
       instructions.style.display = '-webkit-box';
+      faqDiv.style.visibility = 'visible';
       if(state == 'measurement') inMeas = false;
     }
     // dat.GUI.toggleHide();
