@@ -29,34 +29,66 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
 
     <div class="container">
         <h2>How Does the Latency Sensitivity Demo Work?</h2>
-        <p>The latency sensitivity demo works by adding latency to the base latency of your web browser. That means at best you get the base latency of whatever hardware, operating system, and web browser runtime you already have, which may be different than other applications on your machine.</p>
-        <p>Latency is added by having the game capture inputs as it renders frames, then using those inputs to render a later frame. This means that the amount of latency added depends on how quickly frames are completed, and can only be in steps related to that rate and timing. So if your web browser is running at 60 fps, then each additional frame will add 16.67 ms (1/60 s) of latency.</p>
-        <p>While this is different than how you tend to get latency in games, the end result is similar, and it gives you an easy way to try different latencies quickly without having to optimize and remove optimizations from a game.</p>
+        <p>
+            The latency sensitivity demo works by adding latency to the base latency of your web browser. 
+            That means at best you get the base latency of whatever hardware, operating system, and web browser runtime you already have, 
+            which may be different than other applications on your machine.
+        </p>
+        <p>
+            Latency is added by having the game capture inputs as it renders frames, then using those inputs to render a later frame. 
+            This means that the amount of latency added depends on how quickly frames are completed, and can only be in steps related to that rate and timing. 
+            So if your web browser is running at 60 fps, then each additional frame will add 16.67 ms (1/60 s) of latency.
+        </p>
+        <p>
+            While this is different than how you tend to get latency in games, the end result is similar, 
+            and it gives you an easy way to try different latencies quickly without having to optimize and remove optimizations from a game.
+        </p>
     </div>
     <div class="container">
         <h2>How Does it Know My Latency?</h2>
-        <p>Since it only delays frames, the latency is based on the frame rate. The reported latency is based on the last 100 frames taking the average of the time between those frames. So if the game was running at 100 Hz for the last 100 frames (over 1 second), then you'd get a reported latency of 10 ms for every frame of delay.</p>
-        <p>Depending on the mode you ran in, the low latency will add 0 frames, the middle one will add at least 1, and the high latency will add at least 2, giving 0 ms, 10 ms, and 20 ms.</p>
+        <p>
+            Since it only delays frames, the latency is based on the frame rate. 
+            The reported latency is based on the last 100 frames taking the average of the time between those frames. 
+            So if the game was running at 100 Hz for the last 100 frames (over 1 second), then you'd get a reported latency of 10 ms for every frame of delay.
+        </p>
+        <p>
+            Depending on the mode you ran in, the low latency will add 0 frames, the middle one will add at least 1, and the high latency will add at least 2, 
+            giving 0 ms, 10 ms, and 20 ms.
+        </p>
     </div>
     <div class="container">
         <h2>What are the System Requirements?</h2>
-        <p>Most systems will be able to run some version of this demo, but we recommend systems that can hit <i>at least</i> 30 fps, with 60 fps preferred.
-        If you notice the FPS indicator in the top right of the screen turn red at any point while interacting with the demo you may want to try using a higher performance system.</p>
-        <p>We recommend using a mouse for the tracking task. This demo is not designed to run on mobile devices.</p>
+        <p>
+            Most systems will be able to run some version of this demo, but we recommend systems that can hit <i>at least</i> 30 fps, with 60 fps preferred.
+            If you notice the FPS indicator in the top right of the screen turn red at any point while interacting with the demo you may want to try using a higher performance system.
+        </p>
+        <p>
+            We recommend using a mouse for the tracking task. This demo is not designed to run on mobile devices.
+        </p>
     </div>
     <div class="container">
         <h2>What Should I Pay Attention to While Playing to Notice Latency?</h2>
-        <p>Latency is, by definition, the time from you taking an action (e.g., moving the mouse) to the in-game result (e.g, the camera rotating).</p>
-        <p> You can choose to use any mouse motion you like to try to sense latency, but quick/jerky motions tend to make it easier to feel than slow smooth ones.
-        Some users report feeling latency as a sort of "rubber band" effect in which the aim slightly lags changes in aim direction.</p>
+        <p>
+            Latency is, by definition, the time from you taking an action (e.g., moving the mouse) to the in-game result (e.g, the camera rotating).
+        </p>
+        <p> 
+            You can choose to use any mouse motion you like to try to sense latency, but quick/jerky motions tend to make it easier to feel than slow smooth ones.
+            Some users report feeling latency as a sort of "rubber band" effect in which the aim slightly lags changes in aim direction.
+        </p>
     </div>
     <div class="container">
         <h2>What is the Default Latency Value?</h2>
-        <p>If you skip setting your own max latency, the application does its best to add 66 ms of latency by choosing a number of frames to delay based on your performance. Depending what else was running on your computer, you may end up experiencing more or less latency than that, and the end report will try to tell you what you actually felt when you played it.</p>
+        <p>
+            If you skip setting your own max latency, the application does its best to add 66 ms of latency by choosing a number of frames to delay based on your performance. 
+            Depending what else was running on your computer, you may end up experiencing more or less latency than that, and the end report will try to tell you what you actually felt when you played it.
+        </p>
     </div>
     <div class="container">
         <h2>Can I Customize The Experiment?</h2>
-        <p>Yes! There's a variety of parameters you can customize by just changing the URL you use to try the experiment. Check out <a href="https://github.com/NVlabs/FPSLatencyDemo">the github project</a> for details.</p>
+        <p>
+            Yes! There's a variety of parameters you can customize by just changing the URL you use to try the experiment. 
+            Check out <a href="https://github.com/NVlabs/FPSLatencyDemo">the github project</a> for details.
+        </p>
     </div>
 
 </body>
