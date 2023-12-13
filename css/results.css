@@ -1,5 +1,6 @@
 :root {
-    --error_red: #aa0000;
+    --error_color: #aa0000;
+    --warn_color: #aaaaaa;
 
     background-color: #000;
     color: var(--default_text);

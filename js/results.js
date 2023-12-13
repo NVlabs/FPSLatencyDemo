@@ -78,12 +78,14 @@ const highLatResult = document.getElementById("highresult");
 const highDiffResult = document.getElementById("highdiff");
 const midlat = document.getElementById("midlat");
 const highlat = document.getElementById("highlat");
+const lowComment = document.getElementById("lowComment");
 const midComment = document.getElementById("midComment");
 const highComment = document.getElementById("highComment");
 const genComment = document.getElementById("genComment");
 
 // Color constant
-const ERROR_RED = getCSSVar('error_red');
+const ERROR_RED = getCSSVar('error_color');
+const WARN_COLOR = getCSSVar('warn_color');
 
 // Update results fields
 midlat.innerText = `${midLatMs.toFixed(0)} ms or ${midLatFrames} frames`;
@@ -96,16 +98,21 @@ highDiffResult.innerHTML = `${highDiffTot.toFixed(3)}s (${highDiffAcc.toFixed(2)
 
 // Conditional logic
 
+// Check for low time on target for low latency condition
+if(lowLatTot < eqBound){
+    setError(lowComment, "You spent too little time on target without added latency. Try running the experiment again!");
+}
+
 var midComparison;  // Stores result of the low-medium latency comparison
 // Unexpected case, the low latency time on target was less than the mid latency time on target (better mid latency performance)
-if(midDiffTot < -eqBound) {
+ if(midDiffTot < -eqBound) {
     // Indicates possibility of either (1) too small a latency step or (2) not enough training
-    setMidError("You performed better at medium latency than with no added latency, this is unexpected!\nTry re-running the experiment, possibly choosing a higher latency.");
+    setError(midComment, "You performed better at medium latency than with no added latency, this is unexpected!\nTry re-running the experiment, possibly choosing a higher latency.");
     midComparison = 'unexpected';
 }
 // Possible case, no large difference between low and mid latency conditions
 else if(midDiffTot > -eqBound && midDiffTot < eqBound){
-    midComment.innerText  = "You didn't perform much better at medium latency than with no added latency.\nConsider re-running the experiment";
+    setWarn(midComment, "You didn't perform much better at medium latency than with no added latency.\nConsider re-running the experiment");
     midComparison = 'equal';
 }
 else {  // Expected case, we see degredation of the mid latency condition compared to the low latency one
@@ -120,28 +127,28 @@ var highComparison;
 // Unexpected case the high latency time on target was larger than the low latency time on target
 if(highDiffTot < -eqBound) {
     // Indicates possibility of either (1) too small a latency step or (2) not enough training
-    setHighError("You performed better at high latency than with no added latency, this is unexpected!\nTry re-running the experiment, possibly choosing a higher latency.");
+    setError(highComment, "You performed better at high latency than with no added latency, this is unexpected!\nTry re-running the experiment, possibly choosing a higher latency.");
     highComparison = 'unexpected';
 }
 // Unexpected case, the high latency time on target was larger than the mid latency time on target
 else if (midHighDiffTot < -eqBound){
     // Indicates possibility of too small of a latency step (performance didn't degrade)
-    setHighError("You performed better at high latency than at medium latency, this is unexpected!\nTry re-running the experiment, possibly choosing a lower latency.");
+    setError(highComment, "You performed better at high latency than at medium latency, this is unexpected!\nTry re-running the experiment, possibly choosing a lower latency.");
     highComparison = 'unexpected';
 }
 // Rough equality between high and low latency conditions (could signal too small a latency)
 else if(highDiffTot >= -eqBound && highDiffTot <= eqBound){
-    setHighError("You didn't perform much better than with no added latency, this is unexpected!\nTry re-running the experiment, possible choosing a higher latency.");
+    setError(highComment, "You didn't perform much better than with no added latency, this is unexpected!\nTry re-running the experiment, possible choosing a higher latency.");
     highComparison = 'equal';
 }
 // Rough equality between high and mid latency conditions (could signal too small a latency)
 else if(midHighDiffTot >= -eqBound && midHighDiffTot <= eqBound){
-    highComment.innerText = "You didn't perform much better than in the medium latency condition.\nConsider testing a higher latency!";
+    setWarn(highComment, "You didn't perform much better than in the medium latency condition.\nConsider testing a higher latency!");
     highComparison = 'equal';
 }
 // Unexpected case the high-mid relationship is as expected, but the mid latency is invalid
 else if(midHighDiffTot > eqBound && midComparison == "unexpected"){
-    highComment.innerText = `You outperformed the medium latency by ${midHighDiffStr} at high latency,\n but the medium latency time on target was high.\nConsider re-running the experiment.`
+    setWarn(highComment, `You outperformed the medium latency by ${midHighDiffStr} at high latency,\n but the medium latency time on target was high.\nConsider re-running the experiment.`);
     highComparison = 'expected';
 }
 // Expected case, high latency total is lower than both mid and low latency
@@ -151,14 +158,14 @@ else if(midHighDiffTot > eqBound && highDiffTot > eqBound) {
     highComparison = 'expected';
 }
 
-function setMidError(errorString) {
-    midComment.innerText = errorString;
-    midComment.style.color = ERROR_RED;
+function setWarn(comment, warnString){
+    comment.innerText = warnString;
+    comment.style.color = WARN_COLOR;
 }
 
-function setHighError(errorString) {
-    highComment.innerText = errorString;
-    highComment.style.color = ERROR_RED;
+function setError(comment, errorString) {
+    comment.innerText = errorString;
+    comment.style.color = ERROR_RED;
 }
 
 // Only display this text if fit information is reasonable
