@@ -1759,8 +1759,8 @@ var drawC2P = function(){
   // Set position for left edge of the screen
   const distance = 2;
   // Compute the effective width/height of the view
-  const height = 2 * distance * Math.tan(Math.PI/180 * camera.getEffectiveFOV()/2)
-  const width = camera.aspect * height
+  const height = 2 * distance * Math.tan(Math.PI/180 * camera.getEffectiveFOV()/2);
+  const width = camera.aspect * height;
   // Set the position of the C2P based on this
   const x = -width/2 + config.render.c2p.width/2;
   const y = height * (config.render.c2p.vertPos-0.5);
