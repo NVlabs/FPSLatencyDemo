@@ -1758,8 +1758,12 @@ var drawC2P = function(){
   camera.add(c2p);
   // Set position for left edge of the screen
   const distance = 2;
-  const x = -distance * Math.tan(camera.fov/2 * Math.PI/180 * camera.aspect) + config.render.c2p.width/2;
-  const y = distance * Math.tan(camera.fov * Math.PI/180 * (config.render.c2p.vertPos-0.5)) * (1-config.render.c2p.height/2);
+  // Compute the effective width/height of the view
+  const height = 2 * distance * Math.tan(Math.PI/180 * camera.getEffectiveFOV()/2)
+  const width = camera.aspect * height
+  // Set the position of the C2P based on this
+  const x = -width/2 + config.render.c2p.width/2;
+  const y = height * (config.render.c2p.vertPos-0.5);
   c2p.position.set(x, y, -distance);
 }
 // Scene storage
@@ -2001,7 +2005,7 @@ function init() {
   const near = 0.1;
   const far = 10000;
   rawInputState = new RawInputState();
-  camera = new THREE.PerspectiveCamera(103/aspect, aspect, near, far);
+  camera = new THREE.PerspectiveCamera(config.render.hFoV/aspect, aspect, near, far);
   raycaster = new THREE.Raycaster(camera.getWorldPosition(new THREE.Vector3()), camera.getWorldDirection(new THREE.Vector3())); 
   fpsControls = new THREE.FirstPersonControls( camera, scene );
   
