@@ -52,7 +52,7 @@ Typically JSON parameter names are _very_ similar to URL parameter names, but of
     * Fullscreen mode?: `fullscreen` (`Boolean`) = `True`
     * Click-to-photon monitoring
         * Show click to photon-monitor?: `showC2P` (`Boolean`) = `False`
-        * Certical position: `c2pVertPos` (`Boolean`) = `0.5`
+        * Vertical position: `c2pVertPos` (`Boolean`) = `0.5`
         * Output mode: `c2pMode` (`"immediate"` or `"delayed"`) = `"immediate"`
         * Width of area: `c2pWidth` (`Number` 0-1) = `0.2`
         * Height of area: `c2pHeight` (`Number` 0-1) = `0.2`
